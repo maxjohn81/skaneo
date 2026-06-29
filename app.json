@@ -4,7 +4,7 @@
     "slug": "skaneo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/skaneo.png",
+    "icon": "./assets/images/icon_skaneo.png",
     "scheme": "skaneo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,24 +14,20 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/skaneo.png",
-        "backgroundImage": "./assets/images/skaneo.png",
-        "monochromeImage": "./assets/images/skaneo.png"
+        "foregroundImage": "./assets/images/icon_skaneo.png",
+        "backgroundImage": "./assets/images/icon_skaneo.png",
+        "monochromeImage": "./assets/images/icon_skaneo.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.maxjohn.skaneo"
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/skaneo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/skaneo.png",
+          "image": "./assets/images/icon_skaneo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
