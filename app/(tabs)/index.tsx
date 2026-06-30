@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
@@ -10,8 +10,17 @@ export default function HomeScreen() {
 
   return (
     <>
-      <SafeAreaView style={{flex:1}}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
+          <View style={{ position: "absolute", right: 15, top: 15 }}>
+            <Pressable
+              style={{ backgroundColor: "transparent", padding: 15 }}
+              onPress={() => router.push("/about")}
+            >
+              <Ionicons name="ellipsis-vertical" size={20} />
+            </Pressable>
+          </View>
+
           <View style={styles.logoContainer}>
             <View style={styles.logo}>
               <Image
