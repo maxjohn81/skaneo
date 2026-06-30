@@ -2,6 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  ZoomIn,
+} from "react-native-reanimated";
 
 export default function HomeScreen() {
   const handleScan = () => {
@@ -12,44 +18,70 @@ export default function HomeScreen() {
     <>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
-          <View style={{ position: "absolute", right: 15, top: 15 }}>
+          <Animated.View
+            entering={FadeIn.delay(600).duration(400)}
+            style={{ position: "absolute", right: 15, top: 15 }}
+          >
             <Pressable
               style={{ backgroundColor: "transparent", padding: 15 }}
               onPress={() => router.push("/about")}
             >
               <Ionicons name="ellipsis-vertical" size={20} />
             </Pressable>
-          </View>
+          </Animated.View>
 
           <View style={styles.logoContainer}>
-            <View style={styles.logo}>
+            <Animated.View
+              entering={ZoomIn.delay(100).duration(700).springify()}
+              style={styles.logo}
+            >
               <Image
                 source={require('@/assets/images/icon_skaneo.png')}
                 style={{ width: 200, height: 200, position: "absolute", left: -215, top: -45 }}
               />
-              <Text style={styles.slogan}>kaneo</Text>
-            </View>
+              <Animated.Text
+                entering={FadeInDown.delay(350).duration(600).springify()}
+                style={styles.slogan}
+              >
+                kaneo
+              </Animated.Text>
+            </Animated.View>
 
-            <Text style={styles.title}>
+            <Animated.Text
+              entering={FadeInUp.delay(550).duration(500)}
+              style={styles.title}
+            >
               Scanner votre carte à gratter
-            </Text>
-            <Text style={styles.title}>
+            </Animated.Text>
+
+            <Animated.Text
+              entering={FadeInUp.delay(650).duration(500)}
+              style={styles.title}
+            >
               <Text style={styles.yas}>Yas, </Text>
               <Text style={styles.orange}>Orange, </Text>
               <Text style={styles.airtel}>Airtel</Text>
-            </Text>
+            </Animated.Text>
           </View>
 
-          <TouchableOpacity style={styles.scanButton} onPress={handleScan}>
-            <Ionicons name="camera" size={20} color="white" />
-            <Text style={styles.scanButtonText}>Scanner une carte</Text>
-          </TouchableOpacity>
+          <Animated.View
+            entering={FadeInUp.delay(800).duration(600).springify()}
+            style={{ width: "100%", top: 100 }}
+          >
+            <TouchableOpacity style={styles.scanButton} onPress={handleScan}>
+              <Ionicons name="camera" size={20} color="white" />
+              <Text style={styles.scanButtonText}>Scanner une carte</Text>
+            </TouchableOpacity>
+          </Animated.View>
 
-          <View style={styles.footer}>
+          <Animated.View
+            entering={FadeIn.delay(1000).duration(500)}
+            style={styles.footer}
+          >
             <Text style={styles.footerText}>
               © 2026 Skaneo. Tous droits réservés.
             </Text>
-          </View>
+          </Animated.View>
         </View>
       </SafeAreaView>
     </>
@@ -79,7 +111,6 @@ const styles = StyleSheet.create({
     top: 200,
     fontSize: 18,
     fontWeight: "bold",
-    // color: "#FFFFFF",
     marginTop: 10,
   },
 
@@ -102,7 +133,6 @@ const styles = StyleSheet.create({
   },
 
   scanButton: {
-    top: 100,
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
