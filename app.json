@@ -4,19 +4,20 @@
     "slug": "skaneo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon_skaneo.png",
+    "icon": "./assets/images/skaneo.png",
     "scheme": "skaneo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
+    "jsEngine": "hermes",
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon_skaneo.png",
-        "backgroundImage": "./assets/images/icon_skaneo.png",
-        "monochromeImage": "./assets/images/icon_skaneo.png"
+        "foregroundImage": "./assets/images/skaneo.png",
+        "backgroundImage": "./assets/images/skaneo.png",
+        "monochromeImage": "./assets/images/skaneo.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -27,8 +28,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon_skaneo.png",
-          "imageWidth": 200,
+          "image": "./assets/images/skaneo.png",
+          "imageWidth": 100,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
