@@ -1,51 +1,127 @@
-# Welcome to your Expo app 👋
+Résumé optimisation APK Skaneo
+1. Problème initial
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Après un build de production avec :
 
-## Get started
+eas build -p android --profile production
 
-1. Install dependencies
+l'APK généré faisait environ :
 
-   ```bash
-   npm install
-   ```
+155,88 Mo
 
-2. Start the app
+Ce qui était trop lourd pour une application mobile de scan.
 
-   ```bash
-   npx expo start
-   ```
+2. Vérification de la configuration Expo
 
-In the output, you'll find options to open the app in a
+On a analysé ton app.json.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+On a vérifié :
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+l'icône ;
+le splash screen ;
+les plugins Expo ;
+la configuration Android ;
+le projet EAS.
 
-## Get a fresh project
+Le problème ne venait pas :
 
-When you're ready, run:
+des images ;
+de l'icône ;
+des assets.
+3. Nettoyage du projet natif
 
-```bash
-npm run reset-project
-```
+On a exécuté :
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+npx expo prebuild --clean
 
-## Learn more
+Cette commande a :
 
-To learn more about developing your project with Expo, look at the following resources:
+supprimé l'ancien dossier Android généré ;
+recréé une nouvelle configuration native ;
+appliqué les paramètres actuels du app.json.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Cela permettait notamment de prendre en compte les nouvelles ressources Android.
 
-## Join the community
+4. Problème trouvé dans l'APK
 
-Join our community of developers creating universal apps.
+On a extrait l'APK et analysé son contenu.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-"# skaneo" 
+On a découvert que l'APK contenait plusieurs architectures :
+
+lib/
+├── arm64-v8a
+├── armeabi-v7a
+├── x86
+└── x86_64
+
+Donc l'application embarquait :
+
+les téléphones récents ;
+les anciens téléphones 32 bits ;
+les émulateurs Android.
+
+Résultat : beaucoup de fichiers inutiles pour ton usage.
+
+5. Optimisation choisie
+
+Comme Skaneo cible uniquement les téléphones récents, on a décidé de garder uniquement :
+
+arm64-v8a
+6. Correction du app.json
+
+On a ajouté expo-build-properties correctement :
+
+[
+  "expo-build-properties",
+  {
+    "android": {
+      "buildArchs": [
+        "arm64-v8a"
+      ],
+      "enableProguardInReleaseBuilds": true
+    }
+  }
+]
+
+Cela permet :
+
+de supprimer les architectures inutiles ;
+d'activer l'optimisation du code Android avec ProGuard/R8.
+7. Rebuild propre
+
+Après modification :
+
+npx expo prebuild --clean
+
+Puis :
+
+eas build -p android --profile production --clear-cache
+
+Le --clear-cache force EAS à reconstruire complètement l'application avec les nouvelles configurations.
+
+8. Résultat
+
+La dernière méthode a fonctionné ✅
+
+L'APK est maintenant beaucoup plus optimisé car il ne contient plus les architectures inutiles.
+
+La principale amélioration venait de :
+
+Avant :
+arm64-v8a
+armeabi-v7a
+x86
+x86_64
+
+Après :
+arm64-v8a uniquement
+Conclusion
+
+Les principales actions qui ont corrigé le problème :
+
+✅ Analyse de l'APK
+✅ Identification des architectures inutiles
+✅ Configuration ARM64 uniquement
+✅ Activation ProGuard
+✅ Nettoyage avec expo prebuild --clean
+✅ Nouveau build EAS avec cache vidé
