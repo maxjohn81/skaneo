@@ -4,7 +4,7 @@
     "slug": "skaneo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon_skaneo.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "skaneo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,10 +13,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon_skaneo.png",
-        "backgroundImage": "./assets/images/icon_skaneo.png",
-        "monochromeImage": "./assets/images/icon_skaneo.png"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#E6F4FE"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -27,7 +25,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon_skaneo.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -44,9 +42,8 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "b657334f-2fe9-4d50-96d9-e47ca83094eb"
+        "projectId": "a0861b35-17ed-4b9a-bb70-c26600a8efeb"
       }
-    },
-    "owner": "maxjohn"
+    }
   }
 }

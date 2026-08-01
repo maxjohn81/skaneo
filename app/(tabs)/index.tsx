@@ -9,79 +9,97 @@ export default function HomeScreen() {
   };
 
   return (
-    <>
-      <SafeAreaView style={{flex:1}}>
-        <View style={styles.container}>
-          <View style={styles.logoContainer}>
-            <View style={styles.logo}>
-              <Image
-                source={require('@/assets/images/icon_skaneo.png')}
-                style={{ width: 200, height: 200, position: "absolute", left: -215, top: -45 }}
-              />
-              <Text style={styles.slogan}>kaneo</Text>
-            </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('@/assets/images/icon.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
+          <Text style={styles.slogan}>Skaneo</Text>
 
-            <Text style={styles.title}>
-              Scanner votre carte à gratter
-            </Text>
-            <Text style={styles.title}>
-              <Text style={styles.yas}>Yas, </Text>
-              <Text style={styles.orange}>Orange, </Text>
-              <Text style={styles.airtel}>Airtel</Text>
-            </Text>
-          </View>
+          <Text style={styles.title}>Scannez votre carte à gratter</Text>
 
-          <TouchableOpacity style={styles.scanButton} onPress={handleScan}>
-            <Ionicons name="camera" size={20} color="white" />
-            <Text style={styles.scanButtonText}>Scanner une carte</Text>
-          </TouchableOpacity>
-
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              © 2026 Skaneo. Tous droits réservés.
-            </Text>
-          </View>
+          <Text style={styles.subtitle}>
+            <Text style={styles.yas}>Yas </Text>
+            <Text style={styles.dot}>· </Text>
+            <Text style={styles.orange}>Orange </Text>
+            <Text style={styles.dot}>· </Text>
+            <Text style={styles.airtel}>Airtel</Text>
+          </Text>
         </View>
-      </SafeAreaView>
-    </>
+
+        <TouchableOpacity
+          style={styles.scanButton}
+          onPress={handleScan}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="camera" size={20} color="white" />
+          <Text style={styles.scanButtonText}>Scanner une carte</Text>
+        </TouchableOpacity>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            © 2026 Skaneo. Tous droits réservés.
+          </Text>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+
   container: {
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 60,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 40,
   },
 
   logoContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 80,
+    gap: 12,
   },
 
-  logo: {
-    borderRadius: 50,
-    position: 'relative'
-  },
-
-  title: {
-    top: 200,
-    fontSize: 18,
-    fontWeight: "bold",
-    // color: "#FFFFFF",
-    marginTop: 10,
+  logoImage: {
+    width: 120,
+    height: 120,
+    borderRadius:20
   },
 
   slogan: {
-    position: 'absolute',
-    top: 0,
-    left: -72,
-    fontSize: 100,
-    marginTop: 10,
-    fontWeight: "bold"
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#1E293B",
   },
+
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#1E293B",
+    textAlign: "center",
+    marginTop: 8,
+  },
+
+  subtitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+
+  dot: {
+    color: "#94A3B8",
+  },
+
   yas: {
     color: "#FFBF00",
   },
@@ -93,16 +111,14 @@ const styles = StyleSheet.create({
   },
 
   scanButton: {
-    top: 100,
-    display: "flex",
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     gap: 10,
     width: "100%",
     backgroundColor: "#FFBF00",
     paddingVertical: 18,
     borderRadius: 16,
-    alignItems: "center",
   },
 
   scanButtonText: {
@@ -112,7 +128,7 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    marginBottom: 20,
+    marginTop: 20,
   },
 
   footerText: {
