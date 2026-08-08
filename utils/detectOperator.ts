@@ -3,7 +3,6 @@ export type ScanResult = {
   number: string;
   ussd: string;
 };
-
 export function detectOperator(text: string): ScanResult | null {
   const clean = text.replace(/\s+/g, " ").trim();
 
