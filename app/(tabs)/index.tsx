@@ -8,9 +8,21 @@ export default function HomeScreen() {
     router.push("/scanner");
   };
 
+  const handleAbout = () => {
+    router.push("/about/about");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.aboutButton}
+          onPress={handleAbout}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Ionicons name="information-circle-outline" size={26} color="#94A3B8" />
+        </TouchableOpacity>
+
         <View style={styles.logoContainer}>
           <Image
             source={require('@/assets/images/icon.png')}
@@ -63,6 +75,13 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
 
+  aboutButton: {
+    position: "absolute",
+    top: 40,
+    right: 24,
+    zIndex: 1,
+  },
+
   logoContainer: {
     flex: 1,
     justifyContent: "center",
@@ -73,7 +92,7 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 120,
     height: 120,
-    borderRadius:20
+    borderRadius: 20,
   },
 
   slogan: {
