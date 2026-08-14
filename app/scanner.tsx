@@ -9,6 +9,7 @@ export default function ScannerScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<any>(null);
   const [cameraReady, setCameraReady] = useState(false);
+  const [torchOn, setTorchOn] = useState(false);
 
   const { result, resetScan, FRAME_WIDTH, FRAME_HEIGHT } = useCardScanner(
     cameraRef,
@@ -45,12 +46,15 @@ export default function ScannerScreen() {
       <CameraView
         ref={cameraRef}
         style={styles.camera}
+        enableTorch={torchOn}
         animateShutter={false}
         onCameraReady={() => setCameraReady(true)}
       />
 
       <SafeAreaView style={styles.overlaySafeArea}>
         <View style={styles.topBar}>
+          <View style={{ width: 40 }} />
+
           <View style={styles.statusPill}>
             <View
               style={[
@@ -62,6 +66,20 @@ export default function ScannerScreen() {
               {result ? "Carte détectée" : "Scan en cours"}
             </Text>
           </View>
+
+          <Pressable
+            onPress={() => setTorchOn((prev) => !prev)}
+            style={[styles.torchButton, torchOn && styles.torchButtonActive]}
+            accessibilityRole="button"
+            accessibilityLabel={torchOn ? "Désactiver le flash" : "Activer le flash"}
+            hitSlop={10}
+          >
+            <Ionicons
+              name={torchOn ? "flash" : "flash-outline"}
+              size={20}
+              color={torchOn ? "#1E293B" : "white"}
+            />
+          </Pressable>
         </View>
 
         <View style={styles.overlay}>
@@ -107,7 +125,10 @@ const styles = StyleSheet.create({
   },
 
   topBar: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
     paddingTop: 16,
   },
 
@@ -131,6 +152,19 @@ const styles = StyleSheet.create({
     color: "#1E293B",
     fontSize: 13,
     fontWeight: "700",
+  },
+
+  torchButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  torchButtonActive: {
+    backgroundColor: "#FFBF00",
   },
 
   overlay: {

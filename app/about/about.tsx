@@ -15,9 +15,14 @@ export default function AboutScreen() {
             description: "Détecte automatiquement ta carte à gratter en quelques secondes",
         },
         {
+            icon: "cash-outline",
+            title: "Retrait Mobile Money",
+            description: "Effectue un retrait sans mémoriser ni composer de code USSD",
+        },
+        {
             icon: "shield-checkmark-outline",
             title: "100% sécurisé",
-            description: "Aucune donnée n'est envoyée ou stockée sur nos serveurs",
+            description: "Ton code secret n'est jamais demandé, stocké ou transmis par Skaneo",
         },
         {
             icon: "phone-portrait-outline",
@@ -65,9 +70,9 @@ export default function AboutScreen() {
                     </View>
 
                     <Text style={styles.description}>
-                        Skaneo simplifie le rechargement de crédit en scannant automatiquement
-                        le numéro de série de tes cartes à gratter. Fini les erreurs de saisie
-                        et la perte de temps.
+                        Skaneo simplifie tes opérations mobiles du quotidien : recharge de
+                        crédit par scan de carte, et retrait Mobile Money sans code USSD à
+                        mémoriser. Fini les erreurs de saisie et la perte de temps.
                     </Text>
 
                     <View style={styles.section}>
@@ -99,6 +104,19 @@ export default function AboutScreen() {
                             </View>
                         </View>
                     </View>
+
+                    {/* <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Permission d'appel</Text>
+                        <View style={styles.permissionNote}>
+                            <Ionicons name="call-outline" size={20} color="#475569" style={{ marginTop: 1 }} />
+                            <Text style={styles.permissionNoteText}>
+                                Skaneo demande l'autorisation d'appel uniquement pour exécuter
+                                directement les codes USSD nécessaires à tes opérations (recharge,
+                                retrait). Aucun appel n'est passé en dehors de ces opérations, et
+                                ton code secret reste géré exclusivement par ton opérateur.
+                            </Text>
+                        </View>
+                    </View> */}
 
                     <View style={styles.section}>
                         <View style={styles.linksCard}>
@@ -270,6 +288,21 @@ const styles = StyleSheet.create({
     badgeText: {
         fontSize: 13,
         fontWeight: "700",
+    },
+
+    permissionNote: {
+        flexDirection: "row",
+        gap: 10,
+        backgroundColor: "#F8FAFC",
+        borderRadius: 16,
+        padding: 14,
+    },
+
+    permissionNoteText: {
+        flex: 1,
+        fontSize: 13,
+        color: "#475569",
+        lineHeight: 19,
     },
 
     linksCard: {

@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect } from "react";
-import { Linking, Dimensions, Vibration } from "react-native";
+import { Dimensions, Vibration, Platform, PermissionsAndroid } from "react-native";
 import TextRecognition from "@react-native-ml-kit/text-recognition";
 import * as ImageManipulator from "expo-image-manipulator";
 import { detectOperator, ScanResult } from "@/utils/detectOperator";
+import RNImmediatePhoneCall from "react-native-immediate-phone-call";
 
 const FRAME_WIDTH = 320;
 const FRAME_HEIGHT = 180;
@@ -68,7 +69,14 @@ export function useCardScanner(
           Vibration.vibrate(200);
 
           setTimeout(() => {
-            Linking.openURL(`tel:${detected.ussd}`);
+            if (Platform.OS === "android") {
+              try {
+                RNImmediatePhoneCall.immediatePhoneCall(detected.ussd);
+              } catch (e) {
+                console.log("immediatePhoneCall error:", e);
+              }
+            }
+            // iOS : pas de solution directe possible, à gérer côté UI (voir ScannerScreen)
           }, 300);
         }
       } catch (e) {
@@ -82,15 +90,40 @@ export function useCardScanner(
   };
 
   useEffect(() => {
-  if (permissionGranted && cameraReady) {
-    isRunningRef.current = true;
-    scanLoop();
-  }
+    const start = async () => {
+      if (Platform.OS === "android") {
+        const alreadyGranted = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.CALL_PHONE
+        );
+        if (!alreadyGranted) {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+            {
+              title: "Autorisation d'appel requise",
+              message: "Skaneo a besoin d'exécuter le code de recharge directement après le scan.",
+              buttonPositive: "Autoriser",
+              buttonNegative: "Refuser",
+            }
+          );
+          if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Permission refusée, scan désactivé");
+            return;
+          }
+        }
+      }
 
-  return () => {
-    isRunningRef.current = false;
-  };
-}, [permissionGranted, cameraReady]);
+      if (permissionGranted && cameraReady) {
+        isRunningRef.current = true;
+        scanLoop();
+      }
+    };
+
+    start();
+
+    return () => {
+      isRunningRef.current = false;
+    };
+  }, [permissionGranted, cameraReady]);
 
   const resetScan = () => {
     detectedRef.current = false;

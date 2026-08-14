@@ -7,10 +7,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const COLORS = {
   primary: "#FFBF00",
   primaryLight: "#FFF8E6",
-  primaryBorder: "#FFE7A3",
+  primaryBorder: "#FFF8E6",
   danger: "#E8402A",
   dangerLight: "#FDEDEA",
-  dangerBorder: "#F8CFC7",
+  dangerBorder: "#FDEDEA",
   text: "#0F172A",
   muted: "#64748B",
   border: "#E2E8F0",

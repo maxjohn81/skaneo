@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { call } from "react-native-phone-call";
+import RNImmediatePhoneCall from "react-native-immediate-phone-call";
 import { COLORS } from "@/constants/colors";
 import { OPERATORS, type OperatorId } from "@/constants/operators";
 import { buildUssdCode } from "@/utils/ussd";
@@ -51,7 +51,7 @@ export default function WithdrawScreen() {
     }
 
     try {
-      await call({ number: ussdCode, prompt: false });
+      await RNImmediatePhoneCall.immediatePhoneCall(ussdCode);
     } catch {
       Alert.alert("Erreur", "Impossible d'exécuter l'opération.");
     }
