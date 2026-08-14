@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.maxjohn.skaneo"
+      "package": "com.maxjohn.skaneo",
+       "permissions": ["android.permission.CALL_PHONE"]
     },
 
     "plugins": [
