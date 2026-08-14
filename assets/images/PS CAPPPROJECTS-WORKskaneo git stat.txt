@@ -1,0 +1,50 @@
+PS C:\APP\PROJECTS-WORK\skaneo> git status
+On branch nn
+Your branch is up to date with 'origin/nn'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        "assets/images/\360\237\222\216 Mais avant de coder....txt"
+
+nothing added to commit but untracked files present (use "git add" to track)
+PS C:\APP\PROJECTS-WORK\skaneo> git add .
+PS C:\APP\PROJECTS-WORK\skaneo> git commit -m "Oui"
+[nn b26e84b] Oui
+ 1 file changed, 20 insertions(+)
+ create mode 100644 "assets/images/\360\237\222\216 Mais avant de coder....txt"
+PS C:\APP\PROJECTS-WORK\skaneo> git push
+fatal: unable to access 'https://github.com/maxjohn81/skaneo.git/': Could not resolve host: github.com
+PS C:\APP\PROJECTS-WORK\skaneo> git switch nn
+Switched to branch 'nn'
+Your branch is ahead of 'origin/nn' by 1 commit.
+  (use "git push" to publish your local commits)
+PS C:\APP\PROJECTS-WORK\skaneo> git switch rivo
+branch 'rivo' set up to track 'origin/rivo'.
+Switched to a new branch 'rivo'
+PS C:\APP\PROJECTS-WORK\skaneo> git merge nn
+Auto-merging app/(tabs)/index.tsx
+CONFLICT (content): Merge conflict in app/(tabs)/index.tsx
+Auto-merging app/scanner.tsx
+CONFLICT (content): Merge conflict in app/scanner.tsx
+Auto-merging hooks/useCardScanner.ts
+CONFLICT (add/add): Merge conflict in hooks/useCardScanner.ts
+Auto-merging package-lock.json
+CONFLICT (content): Merge conflict in package-lock.json
+Auto-merging package.json
+CONFLICT (content): Merge conflict in package.json
+Auto-merging utils/detectOperator.ts
+CONFLICT (add/add): Merge conflict in utils/detectOperator.ts
+Automatic merge failed; fix conflicts and then commit the result.
+PS C:\APP\PROJECTS-WORK\skaneo> git switch nn
+fatal: cannot switch branch while merging
+Consider "git merge --quit" or "git worktree add".
+PS C:\APP\PROJECTS-WORK\skaneo> git merge --quit 
+PS C:\APP\PROJECTS-WORK\skaneo> git switch nn
+app/(tabs)/index.tsx: needs merge
+app/scanner.tsx: needs merge
+hooks/useCardScanner.ts: needs merge
+package-lock.json: needs merge
+package.json: needs merge
+utils/detectOperator.ts: needs merge
+error: you need to resolve your current index first
+PS C:\APP\PROJECTS-WORK\skaneo> 
