@@ -3,6 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
+import { TERMS_VERSION } from "@/constants/terms";
+import { STORAGE_KEY } from "@/constants/storage_key";
 
 const COLORS = {
   primary: "#FFBF00",
@@ -79,7 +83,26 @@ function ActionCard({ icon, title, description, buttonLabel, variant, onPress }:
   );
 }
 
+
 export default function HomeScreen() {
+  const [checkingTerms, setCheckingTerms] = useState(true);
+
+useEffect(() => {
+  const checkTerms = async () => {
+    try {
+      const acceptedVersion = await AsyncStorage.getItem(STORAGE_KEY);
+      if (acceptedVersion !== TERMS_VERSION) {
+        router.replace("/terms");
+        return;
+      }
+    } catch (e) {
+      console.log("Erreur lecture CGU:", e);
+    }
+    setCheckingTerms(false);
+  };
+
+  checkTerms();
+}, []);
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView

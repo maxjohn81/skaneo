@@ -8,11 +8,10 @@
     "scheme": "skaneo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.maxjohn.skaneo"
     },
-
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
@@ -21,12 +20,18 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.maxjohn.skaneo",
-       "permissions": ["android.permission.CALL_PHONE"]
+      "permissions": [
+        "android.permission.CALL_PHONE"
+      ]
     },
-
     "plugins": [
       "expo-router",
-
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Skaneo a besoin d'accéder à tes photos pour scanner une carte de recharge depuis une image importée."
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -39,7 +44,6 @@
           }
         }
       ],
-
       [
         "expo-build-properties",
         {
@@ -52,12 +56,10 @@
         }
       ]
     ],
-
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
-
     "extra": {
       "router": {},
       "eas": {

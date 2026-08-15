@@ -1,10 +1,49 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
-import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRef, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APP_VERSION, SECRET_STORAGE_KEY } from "@/constants/storage_key";
 
 export default function AboutScreen() {
-    const APP_VERSION = "1.0.0";
+
+    // dans AboutScreen()
+    const [secretUnlocked, setSecretUnlocked] = useState(false);
+    const tapCountRef = useRef(0);
+    const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        AsyncStorage.getItem(SECRET_STORAGE_KEY).then((value) => {
+            if (value === "true") setSecretUnlocked(true);
+        });
+    }, []);
+
+    const handleLogoTap = () => {
+        tapCountRef.current += 1;
+
+        if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+        tapTimerRef.current = setTimeout(() => {
+            tapCountRef.current = 0;
+        }, 2000);
+
+        if (tapCountRef.current >= 5) {
+            tapCountRef.current = 0;
+            setSecretUnlocked((prev) => {
+                const next = !prev;
+                AsyncStorage.setItem(SECRET_STORAGE_KEY, String(next));
+
+                Alert.alert(
+                    next ? "Raccourcis activés 🔓" : "Raccourcis masqués",
+                    next
+                        ? "L'accès aux raccourcis est maintenant visible dans cette page."
+                        : "L'accès aux raccourcis a été masqué."
+                );
+
+                return next;
+            });
+        }
+    };
 
     const router = useRouter();
 
@@ -42,7 +81,7 @@ export default function AboutScreen() {
     return (
         <>
 
-        <Tabs.Screen options={{headerShown:false}} />
+            <Tabs.Screen options={{ headerShown: false }} />
 
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.header}>
@@ -58,13 +97,17 @@ export default function AboutScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.logoSection}>
-                        <View style={styles.logoWrapper}>
+                        <TouchableOpacity
+                            style={styles.logoWrapper}
+                            onPress={handleLogoTap}
+                            activeOpacity={1}
+                        >
                             <Image
                                 source={require('@/assets/images/icon.png')}
                                 style={styles.logoImage}
                                 resizeMode="contain"
                             />
-                        </View>
+                        </TouchableOpacity>
                         <Text style={styles.appName}>Skaneo</Text>
                         <Text style={styles.version}>Version {APP_VERSION}</Text>
                     </View>
@@ -138,7 +181,25 @@ export default function AboutScreen() {
                                 </TouchableOpacity>
                             ))}
                         </View>
+
                     </View>
+                    {secretUnlocked && (
+                        <View style={styles.section}>
+                            <View style={styles.linksCard}>
+                                <TouchableOpacity
+                                    style={styles.linkRow}
+                                    onPress={() => router.push("/secret")}
+                                    activeOpacity={0.6}
+                                >
+                                    <View style={styles.linkLeft}>
+                                        <Ionicons name="flash-outline" size={20} color="#475569" />
+                                        <Text style={styles.linkLabel}>Raccourcis</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    )}
 
                     <Text style={styles.footerText}>
                         © 2026 Skaneo. Tous droits réservés.

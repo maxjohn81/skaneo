@@ -1,9 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Dimensions, Vibration, Platform, PermissionsAndroid } from "react-native";
 import TextRecognition from "@react-native-ml-kit/text-recognition";
 import * as ImageManipulator from "expo-image-manipulator";
 import { detectOperator, ScanResult } from "@/utils/detectOperator";
 import RNImmediatePhoneCall from "react-native-immediate-phone-call";
+import * as ImagePicker from "expo-image-picker";
 
 const FRAME_WIDTH = 320;
 const FRAME_HEIGHT = 180;
@@ -19,6 +20,12 @@ export function useCardScanner(
 ) {
   const [result, setResult] = useState<ScanResult | null>(null);
   const [scanning, setScanning] = useState(true);
+  const [viewSize, setViewSize] = useState({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+
+  const onCameraLayout = useCallback((event: any) => {
+    const { width, height } = event.nativeEvent.layout;
+    setViewSize({ width, height });
+  }, []);
 
   const isRunningRef = useRef(true);
   const isBusyRef = useRef(false);
@@ -40,12 +47,12 @@ export function useCardScanner(
           shutterSound: false,
         });
 
-        const scaleX = photo.width / SCREEN_WIDTH;
-        const scaleY = photo.height / SCREEN_HEIGHT;
+        const scaleX = photo.width / viewSize.width;
+        const scaleY = photo.height / viewSize.height;
 
         const crop = {
-          originX: (SCREEN_WIDTH / 2 - FRAME_WIDTH / 2) * scaleX,
-          originY: (SCREEN_HEIGHT / 2 - FRAME_HEIGHT / 2) * scaleY,
+          originX: (viewSize.width / 2 - FRAME_WIDTH / 2) * scaleX,
+          originY: (viewSize.height / 2 - FRAME_HEIGHT / 2) * scaleY,
           width: FRAME_WIDTH * scaleX,
           height: FRAME_HEIGHT * scaleY,
         };
@@ -86,6 +93,50 @@ export function useCardScanner(
       }
 
       await delay(600);
+    }
+  };
+
+  const scanFromGallery = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      console.log("Permission galerie refusée");
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (pickerResult.canceled || !pickerResult.assets?.[0]) return;
+
+    const imageUri = pickerResult.assets[0].uri;
+
+    try {
+      const ocr = await TextRecognition.recognize(imageUri);
+      const text = ocr.text || "";
+      const detected = detectOperator(text);
+
+      if (detected) {
+        detectedRef.current = true;
+        setResult(detected);
+        setScanning(false);
+        Vibration.vibrate(200);
+
+        setTimeout(() => {
+          if (Platform.OS === "android") {
+            try {
+              RNImmediatePhoneCall.immediatePhoneCall(detected.ussd);
+            } catch (e) {
+              console.log("immediatePhoneCall error:", e);
+            }
+          }
+        }, 300);
+      } else {
+        console.log("Aucun code détecté sur l'image importée");
+      }
+    } catch (e) {
+      console.log("gallery scan error:", e);
     }
   };
 
@@ -131,5 +182,5 @@ export function useCardScanner(
     setScanning(true);
   };
 
-  return { result, scanning, resetScan, FRAME_WIDTH, FRAME_HEIGHT };
+  return { result, scanning, resetScan, scanFromGallery, onCameraLayout, FRAME_WIDTH, FRAME_HEIGHT };
 }

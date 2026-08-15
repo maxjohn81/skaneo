@@ -11,7 +11,7 @@ export default function ScannerScreen() {
   const [cameraReady, setCameraReady] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
 
-  const { result, resetScan, FRAME_WIDTH, FRAME_HEIGHT } = useCardScanner(
+  const { result, resetScan, scanFromGallery, onCameraLayout, FRAME_WIDTH, FRAME_HEIGHT } = useCardScanner(
     cameraRef,
     permission?.granted,
     cameraReady
@@ -49,6 +49,7 @@ export default function ScannerScreen() {
         enableTorch={torchOn}
         animateShutter={false}
         onCameraReady={() => setCameraReady(true)}
+        onLayout={onCameraLayout}
       />
 
       <SafeAreaView style={styles.overlaySafeArea}>
@@ -106,6 +107,20 @@ export default function ScannerScreen() {
             )}
           </View>
         </View>
+
+        {!result && (
+          <View style={styles.bottomBar}>
+            <Pressable
+              onPress={scanFromGallery}
+              style={styles.galleryFab}
+              accessibilityRole="button"
+              accessibilityLabel="Importer une photo depuis la galerie"
+            >
+              <Ionicons name="image" size={24} color="white" />
+            </Pressable>
+            <Text style={styles.galleryFabLabel}>Importer une photo</Text>
+          </View>
+        )}
       </SafeAreaView>
     </View>
   );
@@ -130,6 +145,33 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingTop: 16,
+  },
+  bottomBar: {
+    position: "absolute",
+    bottom: 40,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    gap: 8,
+  },
+
+  galleryFab: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.8)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  galleryFabLabel: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "600",
+    textShadowColor: "rgba(0,0,0,0.6)",
+    textShadowRadius: 4,
   },
 
   statusPill: {
