@@ -1,6 +1,6 @@
 export const TERMS_VERSION = "1.0.0";
 
-export const TERMS_CONTENT = `Dernière mise à jour : Août 2026
+export const TERMS_CONTENT_FR = `Dernière mise à jour : Août 2026
 
 1. À propos de Skaneo
 
@@ -61,3 +61,65 @@ Ces conditions peuvent évoluer, notamment si de nouvelles fonctionnalités sont
 9. Contact
 
 Pour toute question, tu peux contacter le développeur à l'adresse indiquée dans la section "À propos" de l'application.`;
+
+export const TERMS_CONTENT_MG = `Nohavaozina farany : Aogositra 2026
+
+1. Momba an'i Skaneo
+
+Rindrankajy maimaimpoana, novolavolaina sy zaraina mpamorona tsy miankina i Skaneo, tsy misy tanjona ara-barotra. Tsy misy orinasa mitantana azy, ary tsy mifandray amin'ireo orinara Opérateurs (Yas, Orange, Airtel) na andrim-bola.
+
+Amin'ny fampiasana an'i Skaneo, dia ekenao ireto fepetra ireto. Raha tsy manaiky ianao, dia aza mampiasa an'i Skaneo.
+
+2. Izay ataon'i Skaneo
+
+Manampy anao i Skaneo amin'ny:
+- Fizahana ho azy ny kaody karatra famerenana finday (Yas, Orange, Airtel) amin'ny alalan'ny kamera finday;
+- Fanomanana sy fandefasana ho azy ny kaody USSD mifanaraka amin'io famerenana io;
+- Fanomanana sy fandefasana USSD ho an'ny fanaisorana vola Mobile Money, miainga amin'ny laharana sy vola omenao.
+
+Fanomanana sy fandefasana ireo kaody ireo any amin'ireo Opérateurs ihany no ataon'i Skaneo. Tsy poketra elektronika, tsy rindrankajy banky, ary tsy mpanelanelana ara-bola i Skaneo.
+
+3. Voaaro foana ny kaody miafinao (PIN)
+
+Tsy angatahin'i Skaneo, tsy voatahiry ary tsy alefany mihitsy ny kaody miafinao (PIN) Mobile Money. Rehefa angatahin'ny Opérateurs izany, dia ao amin'ny interface-n'ny rafitry ny findainao ihany no anoratanao azy, tsy mifandray amin'i Skaneo. Tsy misy angona toy izany mandalo ao amin'ny rindrankajy.
+
+4. Fahazoan-dalana angatahina
+
+Mba hiasany, misy fahazoan-dalana angatahin'i Skaneo:
+- Kamera: hizahana ny kaody karatra famerenana.
+- Sary / Galeria: raha misafidy hampiditra sary ianao fa tsy scan mivantana.
+- Antso finday: handefasana mivantana ny kaody USSD nomanina, mba tsy hoanoratanao izany manokana.
+
+Azonao lavina na esorina amin'ny fotoana rehetra ireo fahazoan-dalana ireo ao amin'ny fandrindrana ny findainao. Misy asa amin'i Skaneo tsy hiasa tsara intsony amin'izay.
+
+5. Ny andraikitrao amin'ny maha mpampiasa anao
+
+Alohan'ny fanamafisana asa iray (famerenana na fanaisorana), dia ianao no tompon'andraikitra amin'ny fanamarinana:
+- Fa marina ny laharana finday nosoratana;
+- Fa marina ny vola nosoratana;
+- Fa mifanaraka tsara amin'ny SIM tianao hampiasaina ny Opérateur voafidy.
+
+Manampy anao amin'ny fanomanana ireo asa ireo i Skaneo, saingy ianao manontolo no tompon'andraikitra amin'ny fanamarinana ireo angona ireo alohan'ny fanamafisana.
+
+6. Tsy fisian'antoka sy fetran'andraikitra
+
+Tetikasa manokana, novolavolaina sy zaraina maimaimpoana i Skaneo, tsy misy ekipa manokana na fanampiana ara-barotra. Omena "araka izay misy azy" izy, tsy misy antoka na inona na inona, indrindra:
+- Tsy misy antoka fa ho azo ampiasaina hatrany na tsy hisy diso;
+- Tsy misy antoka fa marina hatrany ny fahitana OCR;
+- Tsy misy antoka fa hamaly araka ny nampoizina ny rafitry ny Opérateurs.
+
+Araka izay eken'ny lalàna manan-kery, tsy azo tantanina ny mpamorona an'i Skaneo amin'ny fatiantoka ara-bola, diso amin'ny fifampiraharahana, na fahavoazana hafa vokatry ny fampiasana ny rindrankajy, anisan'izany ny diso fanoratana, olana ara-teknika, na tsy fahombiazan'ny rafitry ny Opérateurs.
+
+Tsy misolo ny fomba ofisialin'ny Opérateurs i Skaneo. Raha misy fisalasalana amin'ny fifampiraharahana, mifandraisa mivantana amin'ny serivisy mpanjifan'ny Opérateurs ampiasainao.
+
+7. Angona manokana
+
+Tsy manangona, tsy mitahiry ary tsy mandefa any amin'ny serveur rehetra i Skaneo ny laharana finday, vola, na kaody famerenana ampiasainao ao amin'ny rindrankajy. Ao amin'ny findainao ihany ireo angona ireo, mandritra ny fotoana fanomanana ny asa USSD.
+
+8. Fanovana ireto fepetra ireto
+
+Mety hiova ireto fepetra ireto, indrindra raha misy asa vaovao ampiana amin'i Skaneo. Raha misy fanovana lehibe, dia hangatahina ianao hanaiky azy indray alohan'ny hanohizana ny fampiasana ny rindrankajy.
+
+9. Fifandraisana
+
+Raha misy fanontaniana, azonao antenaina ny mifandray amin'ny mpamorona amin'ny adiresy voalaza ao amin'ny fizarana "Momba anay" ao amin'ny rindrankajy.`;

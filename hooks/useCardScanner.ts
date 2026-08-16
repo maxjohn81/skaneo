@@ -4,7 +4,8 @@ import TextRecognition from "@react-native-ml-kit/text-recognition";
 import { detectOperator, ScanResult } from "@/utils/detectOperator";
 import RNImmediatePhoneCall from "react-native-immediate-phone-call";
 import * as ImagePicker from "expo-image-picker";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MULTISCAN_STORAGE_KEY, MULTISCAN_MAX_STORAGE_KEY, MULTISCAN_MAX_DEFAULT } from "@/constants/settings";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -19,6 +20,7 @@ export function useCardScanner(
   const [scanning, setScanning] = useState(true);
   const [viewSize, setViewSize] = useState({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
   const [rawDigits, setRawDigits] = useState<string>("");
+  const [scannedItems, setScannedItems] = useState<ScanResult[]>([]);
 
   const onCameraLayout = useCallback((event: any) => {
     const { width, height } = event.nativeEvent.layout;
@@ -56,10 +58,12 @@ export function useCardScanner(
         const detected = detectOperator(text);
 
         if (detected && !detectedRef.current) {
+          const multiscanEnabled = (await AsyncStorage.getItem(MULTISCAN_STORAGE_KEY)) === "true";
+          const maxRaw = await AsyncStorage.getItem(MULTISCAN_MAX_STORAGE_KEY);
+          const maxCount = maxRaw ? parseInt(maxRaw, 10) : MULTISCAN_MAX_DEFAULT;
+
           detectedRef.current = true;
           setResult(detected);
-          setScanning(false);
-
           Vibration.vibrate(200);
 
           setTimeout(() => {
@@ -70,8 +74,22 @@ export function useCardScanner(
                 console.log("immediatePhoneCall error:", e);
               }
             }
-            // iOS : pas de solution directe possible, à gérer côté UI (voir ScannerScreen)
           }, 300);
+
+          setScannedItems((prev) => {
+            const next = [...prev, detected];
+
+            if (multiscanEnabled && next.length < maxCount) {
+              setTimeout(() => {
+                detectedRef.current = false;
+                setResult(null);
+              }, 2000);
+            } else {
+              setScanning(false);
+            }
+
+            return next;
+          });
         }
       } catch (e) {
         console.log("scan error:", e);
@@ -168,7 +186,8 @@ export function useCardScanner(
     setResult(null);
     setScanning(true);
     setRawDigits("");
+    setScannedItems([]);
   };
 
-  return { result, scanning, resetScan, scanFromGallery,rawDigits, onCameraLayout };
+  return { result, scanning, resetScan, scanFromGallery, rawDigits, onCameraLayout,scannedItems };
 }

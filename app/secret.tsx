@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import RNImmediatePhoneCall from "react-native-immediate-phone-call";
 import { COLORS } from "@/constants/colors";
 import { SHORTCUTS, type Shortcut, type ShortcutOperator } from "@/constants/shortcuts";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const OPERATOR_STYLES: Record<ShortcutOperator, { color: string; bg: string; label: string }> = {
   yas: { color: "#B8860B", bg: "#FFF7E0", label: "Yas" },
@@ -44,13 +45,11 @@ async function ensureCallPermission(): Promise<boolean> {
 function ShortcutButton({ shortcut }: { shortcut: Shortcut }) {
   const [loading, setLoading] = useState(false);
   const opStyle = OPERATOR_STYLES[shortcut.operator];
+  const { t } = useTranslation();
 
   const handlePress = async () => {
     if (Platform.OS === "ios") {
-      Alert.alert(
-        "Non disponible sur iOS",
-        "L'exécution directe des codes USSD n'est pas autorisée par Apple sur cette plateforme."
-      );
+      Alert.alert(t("secret_ios_title"), t("secret_ios_text"));
       return;
     }
 
@@ -59,18 +58,15 @@ function ShortcutButton({ shortcut }: { shortcut: Shortcut }) {
     const hasPermission = await ensureCallPermission();
     if (!hasPermission) {
       setLoading(false);
-      Alert.alert(
-        "Permission refusée",
-        "Skaneo ne peut pas exécuter ce code sans l'autorisation d'appel."
-      );
+      Alert.alert(t("secret_permission_denied_title"), t("secret_permission_denied_text"));
       return;
     }
 
     try {
       RNImmediatePhoneCall.immediatePhoneCall(shortcut.ussd);
-      Alert.alert("Code exécuté ✅", `${shortcut.label} (${shortcut.ussd}) a été lancé.`);
+      Alert.alert(t("secret_executed_title"), `${shortcut.label} (${shortcut.ussd})`);
     } catch (e) {
-      Alert.alert("Erreur", "Impossible d'exécuter ce code.");
+      Alert.alert(t("secret_error_title"), t("secret_error_text"));
     } finally {
       setLoading(false);
     }
@@ -132,6 +128,7 @@ function OperatorSection({ operator }: { operator: ShortcutOperator }) {
 }
 
 export default function SecretScreen() {
+   const { t } = useTranslation();
   return (
     <>
       <Tabs.Screen options={{ headerShown: false }} />
@@ -146,7 +143,7 @@ export default function SecretScreen() {
           >
             <Ionicons name="chevron-back" size={24} color={COLORS.text} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Raccourcis</Text>
+          <Text style={styles.headerTitle}>{t("secret_title")}</Text>
           <View style={{ width: 24 }} />
         </View>
 

@@ -20,8 +20,10 @@ import { buildUssdCode } from "@/utils/ussd";
 import { useCallPermission } from "@/hooks/useCallPermission";
 import { OperatorButton } from "@/components/OperatorButton";
 import { SecurityBanner } from "@/components/SecurityBanner";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function WithdrawScreen() {
+  const { t } = useTranslation();
   const { status, checking, checkPermission } = useCallPermission();
   const [operator, setOperator] = useState<OperatorId>("yas");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -43,17 +45,14 @@ export default function WithdrawScreen() {
     const ussdCode = buildUssdCode(operator, phoneNumber.trim(), amount.trim());
 
     if (Platform.OS === "ios") {
-      Alert.alert(
-        "Non disponible sur iOS",
-        "L'exécution directe des codes USSD n'est pas autorisée par Apple sur cette plateforme."
-      );
+      Alert.alert(t("withdraw_ios_title"), t("withdraw_ios_text"));
       return;
     }
 
     try {
       await RNImmediatePhoneCall.immediatePhoneCall(ussdCode);
     } catch {
-      Alert.alert("Erreur", "Impossible d'exécuter l'opération.");
+      Alert.alert(t("withdraw_error_title"), t("withdraw_error_text"));
     }
   };
 
@@ -79,7 +78,7 @@ export default function WithdrawScreen() {
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.text} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Faire un retrait</Text>
+            <Text style={styles.headerTitle}>{t("withdraw_title")}</Text>
             <View style={{ width: 24 }} />
           </View>
 
@@ -88,11 +87,11 @@ export default function WithdrawScreen() {
             keyboardShouldPersistTaps="handled"
           >
             <SecurityBanner
-              title="Vos opérations sont sécurisées."
-              description="Aucun code secret n'est stocké dans l'application."
+              title={t("withdraw_security_title")}
+              description={t("withdraw_security_text")}
             />
 
-            <Text style={styles.sectionLabel}>Opérateur</Text>
+            <Text style={styles.sectionLabel}>{t("withdraw_operator_label")}</Text>
             <View style={styles.operatorRow}>
               {OPERATORS.map((op) => (
                 <OperatorButton
@@ -104,12 +103,12 @@ export default function WithdrawScreen() {
               ))}
             </View>
 
-            <Text style={styles.sectionLabel}>Numéro destinataire</Text>
+            <Text style={styles.sectionLabel}>{t("withdraw_number_label")}</Text>
             <View style={styles.inputWrap}>
               <Ionicons name="call-outline" size={18} color={COLORS.muted} />
               <TextInput
                 style={styles.input}
-                placeholder="034 XX XXX XX"
+                placeholder={t("withdraw_placeholder_number")}
                 placeholderTextColor={COLORS.muted}
                 keyboardType="phone-pad"
                 value={phoneNumber}
@@ -117,14 +116,14 @@ export default function WithdrawScreen() {
                 accessibilityLabel="Numéro destinataire"
               />
             </View>
-            <Text style={styles.helperText}>Entrez le numéro du destinataire.</Text>
+            <Text style={styles.helperText}>{t("withdraw_number_helper")}</Text>
 
-            <Text style={styles.sectionLabel}>Montant</Text>
+            <Text style={styles.sectionLabel}>{t("withdraw_amount_label")}</Text>
             <View style={styles.inputWrap}>
               <Ionicons name="wallet-outline" size={18} color={COLORS.muted} />
               <TextInput
                 style={styles.input}
-                placeholder="0 Ar"
+                placeholder={t("withdraw_placeholder_amount")}
                 placeholderTextColor={COLORS.muted}
                 keyboardType="numeric"
                 value={amount}
@@ -132,7 +131,7 @@ export default function WithdrawScreen() {
                 accessibilityLabel="Montant à retirer"
               />
             </View>
-            <Text style={styles.helperText}>Entrez le montant à retirer.</Text>
+            <Text style={styles.helperText}>{t("withdraw_amount_helper")}</Text>
           </ScrollView>
 
           <View style={styles.footer}>
@@ -145,7 +144,7 @@ export default function WithdrawScreen() {
               accessibilityLabel="Confirmer le retrait"
             >
               <Ionicons name="arrow-up" size={18} color="#FFFFFF" />
-              <Text style={styles.submitButtonText}>Retrait</Text>
+              <Text style={styles.submitButtonText}>{t("withdraw_submit_button")}</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>

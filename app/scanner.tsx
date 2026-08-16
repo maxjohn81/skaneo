@@ -6,8 +6,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useCardScanner } from "@/hooks/useCardScanner";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function ScannerScreen() {
+  const { t } = useTranslation();
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<any>(null);
   const [cameraReady, setCameraReady] = useState(false);
@@ -21,6 +23,7 @@ export default function ScannerScreen() {
     scanFromGallery,
     onCameraLayout,
     rawDigits,
+    scannedItems
   } = useCardScanner(cameraRef, permission?.granted, cameraReady);
   const insets = useSafeAreaInsets();
   if (!permission) return <View style={styles.safeArea} />;
@@ -33,14 +36,12 @@ export default function ScannerScreen() {
             <Ionicons name="camera-outline" size={40} color="#B8860B" />
           </View>
 
-          <Text style={styles.permissionTitle}>Accès à la caméra requis</Text>
-          <Text style={styles.permissionSubtitle}>
-            Nous avons besoin de la caméra pour scanner ta carte automatiquement
-          </Text>
+          <Text style={styles.permissionTitle}>{t("scanner_permission_title")}</Text>
+          <Text style={styles.permissionSubtitle}>{t("scanner_permission_subtitle")}</Text>
 
           <Pressable onPress={requestPermission} style={styles.permissionButton}>
             <Ionicons name="camera" size={20} color="white" />
-            <Text style={styles.permissionButtonText}>Autoriser la caméra</Text>
+            <Text style={styles.permissionButtonText}>{t("scanner_permission_button")}</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -59,6 +60,18 @@ export default function ScannerScreen() {
       />
 
       <SafeAreaView style={styles.overlaySafeArea}>
+        {scannedItems.length > 0 && (
+          <View style={styles.scannedList}>
+            {scannedItems.map((item, index) => (
+              <View key={`${item.ussd}-${index}`} style={styles.scannedItem}>
+                <Ionicons name="checkmark-circle" size={16} color="#22C55E" />
+                <Text style={styles.scannedItemText} numberOfLines={1}>
+                  {item.operator} · {item.number}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
         <View style={styles.topBar}>
           <View style={{ width: 40 }} />
 
@@ -70,7 +83,7 @@ export default function ScannerScreen() {
               ]}
             />
             <Text style={styles.statusText}>
-              {result ? "Carte détectée" : "Scan en cours"}
+              {result ? t("scanner_status_detected") : t("scanner_status_scanning")}
             </Text>
           </View>
 
@@ -98,7 +111,7 @@ export default function ScannerScreen() {
 
               <Pressable onPress={resetScan} style={styles.rescanButton}>
                 <Ionicons name="scan-outline" size={18} color="white" />
-                <Text style={styles.rescanButtonText}>Scanner une autre carte</Text>
+                <Text style={styles.rescanButtonText}>{t("scanner_rescan_button")}</Text>
               </Pressable>
             </View>
           </View>
@@ -114,7 +127,7 @@ export default function ScannerScreen() {
           >
             <View style={styles.tabBarInfo}>
               <Text style={[styles.tabBarLabel, isDark && styles.tabBarLabelDark]}>
-                Numéro détecté
+                {t("scanner_digits_label")}
               </Text>
               <Text style={styles.tabBarDigits} numberOfLines={1}>
                 {rawDigits || "—"}
@@ -131,7 +144,7 @@ export default function ScannerScreen() {
                 <Ionicons name="image" size={20} color={isDark ? "white" : "#1E293B"} />
               </View>
               <Text style={[styles.tabBarActionLabel, isDark && styles.tabBarActionLabelDark]}>
-                Importer
+                {t("scanner_import_label")}
               </Text>
             </Pressable>
           </View>
@@ -152,6 +165,28 @@ const styles = StyleSheet.create({
 
   overlaySafeArea: {
     ...StyleSheet.absoluteFillObject,
+  },
+  scannedList: {
+    position: "absolute",
+    bottom: 110,
+    left: 16,
+    right: 16,
+    gap: 6,
+  },
+  scannedItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(20,20,20,0.75)",
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  scannedItemText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "600",
+    flex: 1,
   },
 
   topBar: {

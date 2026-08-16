@@ -4,8 +4,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "@/constants/colors";
 import { useCallPermission } from "@/hooks/useCallPermission";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function WithdrawPermissionScreen() {
+  const { t } = useTranslation();
   const { status, checking, requestPermission } = useCallPermission();
 
   const handleAuthorize = async () => {
@@ -13,7 +15,7 @@ export default function WithdrawPermissionScreen() {
     if (granted) {
       router.replace("/withdraw");
     }
-    
+
   };
 
   return (
@@ -30,7 +32,7 @@ export default function WithdrawPermissionScreen() {
           >
             <Ionicons name="chevron-back" size={24} color={COLORS.text} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Faire un retrait</Text>
+          <Text style={styles.headerTitle}>{t("withdraw_title")}</Text>
           <View style={{ width: 24 }} />
         </View>
 
@@ -39,18 +41,11 @@ export default function WithdrawPermissionScreen() {
             <Ionicons name="call" size={36} color={COLORS.danger} />
           </View>
 
-          <Text style={styles.title}>Autorisation d'appel requise</Text>
-          <Text style={styles.description}>
-            Pour préparer votre retrait, Skaneo a besoin d'exécuter directement
-            l'opération USSD auprès de votre opérateur. Aucune donnée n'est
-            stockée : votre code secret reste géré uniquement par l'opérateur.
-          </Text>
+          <Text style={styles.title}>{t("withdraw_permission_title_screen")}</Text>
+          <Text style={styles.description}>{t("withdraw_permission_description")}</Text>
 
           {status === "denied" && (
-            <Text style={styles.deniedNote}>
-              L'autorisation a été refusée. Tu peux réessayer, ou l'activer
-              manuellement dans les réglages de l'appareil.
-            </Text>
+            <Text style={styles.deniedNote}>{t("withdraw_permission_denied_note")}</Text>
           )}
         </View>
 
@@ -64,7 +59,7 @@ export default function WithdrawPermissionScreen() {
             accessibilityLabel="Autoriser l'appel"
           >
             <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
-            <Text style={styles.authorizeButtonText}>Autoriser l'appel</Text>
+            <Text style={styles.authorizeButtonText}>{t("withdraw_permission_authorize_button")}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

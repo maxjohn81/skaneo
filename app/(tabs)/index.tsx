@@ -7,6 +7,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { TERMS_VERSION } from "@/constants/terms";
 import { STORAGE_KEY } from "@/constants/storage_key";
+import { Modal, Pressable } from "react-native";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const COLORS = {
   primary: "#FFBF00",
@@ -85,24 +87,34 @@ function ActionCard({ icon, title, description, buttonLabel, variant, onPress }:
 
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const [checkingTerms, setCheckingTerms] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(false);
 
-useEffect(() => {
-  const checkTerms = async () => {
-    try {
-      const acceptedVersion = await AsyncStorage.getItem(STORAGE_KEY);
-      if (acceptedVersion !== TERMS_VERSION) {
-        router.replace("/terms");
-        return;
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const languageChosen = await AsyncStorage.getItem("skaneo_language_chosen");
+        if (languageChosen !== "true") {
+          router.replace("/language-select");
+          return;
+        }
+
+        const acceptedVersion = await AsyncStorage.getItem(STORAGE_KEY);
+        if (acceptedVersion !== TERMS_VERSION) {
+          router.replace("/terms");
+          return;
+        }
+      } catch (e) {
+        console.log("Erreur vérification onboarding:", e);
       }
-    } catch (e) {
-      console.log("Erreur lecture CGU:", e);
-    }
-    setCheckingTerms(false);
-  };
+      setCheckingTerms(false);
+    };
 
-  checkTerms();
-}, []);
+    checkOnboarding();
+  }, []);
+
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
@@ -110,13 +122,49 @@ useEffect(() => {
         showsVerticalScrollIndicator={false}
       >
         <TouchableOpacity
-          style={styles.infoButton}
-          onPress={() => router.push("/about/about")}
+          style={styles.menuButton}
+          onPress={() => setMenuVisible(true)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           accessibilityRole="button"
-          accessibilityLabel="À propos"
+          accessibilityLabel="Ouvrir le menu"
         >
-          <Ionicons name="information-circle-outline" size={22} color={COLORS.muted} />
+          <Ionicons name="ellipsis-vertical" size={22} color="#64748B" />
         </TouchableOpacity>
+
+        <Modal
+          visible={menuVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setMenuVisible(false)}
+        >
+          <Pressable style={styles.menuOverlay} onPress={() => setMenuVisible(false)}>
+            <View style={styles.menuCard}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  setMenuVisible(false);
+                  router.push("/settings");
+                }}
+              >
+                <Ionicons name="settings-outline" size={20} color="#1E293B" />
+                <Text style={styles.menuItemText}>{t("menu_settings")}</Text>
+              </TouchableOpacity>
+
+              <View style={styles.menuSeparator} />
+
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  setMenuVisible(false);
+                  router.push("/about/about");
+                }}
+              >
+                <Ionicons name="information-circle-outline" size={20} color="#1E293B" />
+                <Text style={styles.menuItemText}>{t("menu_about")}</Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Modal>
 
         <View style={styles.header}>
           <Image
@@ -125,7 +173,7 @@ useEffect(() => {
             resizeMode="contain"
           />
           <Text style={styles.appName}>Skaneo</Text>
-          <Text style={styles.tagline}>Simplifiez vos opérations mobiles</Text>
+          <Text style={styles.tagline}>{t("home_tagline")}</Text>
 
           <Text style={styles.operators}>
             <Text style={{ color: COLORS.yas }}>Yas</Text>
@@ -139,24 +187,24 @@ useEffect(() => {
         <View style={styles.actions}>
           <ActionCard
             icon="camera"
-            title="Scanner une carte"
-            description="Scannez votre carte à gratter et rechargez facilement."
-            buttonLabel="Scanner une carte"
+            title={t("home_scan_title")}
+            description={t("home_scan_description")}
+            buttonLabel={t("home_scan_button")}
             variant="primary"
             onPress={() => router.push("/scanner")}
           />
 
           <ActionCard
             icon="arrow-up-circle-outline"
-            title="Faire un retrait"
-            description="Retirez de l'argent facilement sans composer de code."
-            buttonLabel="Faire un retrait"
+            title={t("home_withdraw_title")}
+            description={t("home_withdraw_description")}
+            buttonLabel={t("home_withdraw_button")}
             variant="danger"
             onPress={() => router.push("/withdraw")}
           />
         </View>
 
-        <Text style={styles.footerText}>© 2026 Skaneo. Tous droits réservés.</Text>
+        <Text style={styles.footerText}>{t("home_footer")}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -171,7 +219,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingBottom: 32,
-    justifyContent:"space-between"
+    justifyContent: "space-between"
   },
   infoButton: {
     alignSelf: "flex-end",
@@ -255,5 +303,50 @@ const styles = StyleSheet.create({
     color: COLORS.muted,
     fontSize: 13,
     marginTop: 24,
+  },
+  menuButton: {
+    alignSelf: "flex-end",
+    padding: 8,
+    marginTop: 8,
+  },
+
+  menuOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
+
+  menuCard: {
+    position: "absolute",
+    top: 60,
+    right: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    paddingVertical: 6,
+    minWidth: 180,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+
+  menuItemText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1E293B",
+  },
+
+  menuSeparator: {
+    height: 1,
+    backgroundColor: "#EEF2F6",
+    marginHorizontal: 8,
   },
 });

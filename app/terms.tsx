@@ -11,7 +11,9 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TERMS_CONTENT, TERMS_VERSION } from "@/constants/terms";
+import { TERMS_CONTENT_FR, TERMS_CONTENT_MG, TERMS_VERSION } from "@/constants/terms";
+import { useTranslation } from "@/hooks/useTranslation";
+
 import { STORAGE_KEY } from "@/constants/storage_key";
 
 
@@ -19,6 +21,8 @@ import { STORAGE_KEY } from "@/constants/storage_key";
 export default function TermsScreen() {
     const [accepted, setAccepted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const { t, lang } = useTranslation();
+    const content = lang === "mg" ? TERMS_CONTENT_MG : TERMS_CONTENT_FR;
 
     const handleContinue = async () => {
         if (!accepted || submitting) return;
@@ -39,7 +43,7 @@ export default function TermsScreen() {
 
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Conditions d'utilisation</Text>
+                    <Text style={styles.headerTitle}>{t("terms_header_title")}</Text>
                 </View>
 
                 <ScrollView
@@ -47,7 +51,7 @@ export default function TermsScreen() {
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={true}
                 >
-                    <Text style={styles.body}>{TERMS_CONTENT}</Text>
+                    <Text style={styles.body}>{content}</Text>
                 </ScrollView>
 
                 <View style={styles.footer}>
@@ -61,9 +65,7 @@ export default function TermsScreen() {
                         <View style={[styles.checkbox, accepted && styles.checkboxChecked]}>
                             {accepted && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
                         </View>
-                        <Text style={styles.checkboxLabel}>
-                            J'ai lu et j'accepte les conditions d'utilisation de Skaneo.
-                        </Text>
+                        <Text style={styles.checkboxLabel}>{t("terms_checkbox_label")}</Text>
                     </Pressable>
 
                     <TouchableOpacity
@@ -75,7 +77,7 @@ export default function TermsScreen() {
                         accessibilityLabel="Continuer"
                     >
                         <Text style={styles.continueButtonText}>
-                            {submitting ? "Chargement..." : "Continuer"}
+                            {submitting ? t("terms_loading") : t("terms_continue_button")}
                         </Text>
                     </TouchableOpacity>
                 </View>

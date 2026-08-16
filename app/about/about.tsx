@@ -5,8 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRef, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { APP_VERSION, SECRET_STORAGE_KEY } from "@/constants/storage_key";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function AboutScreen() {
+    const { t } = useTranslation();
 
     // dans AboutScreen()
     const [secretUnlocked, setSecretUnlocked] = useState(false);
@@ -34,10 +36,8 @@ export default function AboutScreen() {
                 AsyncStorage.setItem(SECRET_STORAGE_KEY, String(next));
 
                 Alert.alert(
-                    next ? "Raccourcis activés 🔓" : "Raccourcis masqués",
-                    next
-                        ? "L'accès aux raccourcis est maintenant visible dans cette page."
-                        : "L'accès aux raccourcis a été masqué."
+                    next ? t("about_secret_unlocked_title") : t("about_secret_locked_title"),
+                    next ? t("about_secret_unlocked_text") : t("about_secret_locked_text")
                 );
 
                 return next;
@@ -50,30 +50,30 @@ export default function AboutScreen() {
     const features = [
         {
             icon: "flash-outline",
-            title: "Scan instantané",
-            description: "Détecte automatiquement ta carte à gratter en quelques secondes",
+            title: t("about_feature_scan_title"),
+            description: t("about_feature_scan_desc"),
         },
         {
             icon: "cash-outline",
-            title: "Retrait Mobile Money",
-            description: "Effectue un retrait sans mémoriser ni composer de code USSD",
+            title: t("about_feature_withdraw_title"),
+            description: t("about_feature_withdraw_desc"),
         },
         {
             icon: "shield-checkmark-outline",
-            title: "100% sécurisé",
-            description: "Ton code secret n'est jamais demandé, stocké ou transmis par Skaneo",
+            title: t("about_feature_secure_title"),
+            description: t("about_feature_secure_desc"),
         },
         {
             icon: "phone-portrait-outline",
-            title: "Multi-opérateurs",
-            description: "Compatible avec Yas, Orange et Airtel",
+            title: t("about_feature_multi_title"),
+            description: t("about_feature_multi_desc"),
         },
-    ];
+    ];;
 
     const links = [
         {
             icon: "mail-outline",
-            label: "Nous contacter",
+            label: t("about_contact"),
             onPress: () => Linking.openURL("mailto:rivoandriharisoa@gmail.com"),
         }
     ];
@@ -88,7 +88,7 @@ export default function AboutScreen() {
                     <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="chevron-back" size={24} color="#1E293B" />
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>À propos</Text>
+                    <Text style={styles.headerTitle}>{t("about_title")}</Text>
                     <View style={styles.backButton} />
                 </View>
 
@@ -112,14 +112,10 @@ export default function AboutScreen() {
                         <Text style={styles.version}>Version {APP_VERSION}</Text>
                     </View>
 
-                    <Text style={styles.description}>
-                        Skaneo simplifie tes opérations mobiles du quotidien : recharge de
-                        crédit par scan de carte, et retrait Mobile Money sans code USSD à
-                        mémoriser. Fini les erreurs de saisie et la perte de temps.
-                    </Text>
+                    <Text style={styles.description}>{t("about_description")}</Text>
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Fonctionnalités</Text>
+                        <Text style={styles.sectionTitle}>{t("about_features_section")}</Text>
                         {features.map((feature, index) => (
                             <View key={index} style={styles.featureRow}>
                                 <View style={styles.featureIcon}>
@@ -134,7 +130,7 @@ export default function AboutScreen() {
                     </View>
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Opérateurs pris en charge</Text>
+                        <Text style={styles.sectionTitle}>{t("about_operators_section")}</Text>
                         <View style={styles.badgeRow}>
                             <View style={[styles.badge, { backgroundColor: "#FFF7E0" }]}>
                                 <Text style={[styles.badgeText, { color: "#B8860B" }]}>Yas</Text>
@@ -193,7 +189,7 @@ export default function AboutScreen() {
                                 >
                                     <View style={styles.linkLeft}>
                                         <Ionicons name="flash-outline" size={20} color="#475569" />
-                                        <Text style={styles.linkLabel}>Raccourcis</Text>
+                                        <Text style={styles.linkLabel}>{t("about_shortcuts")}</Text>
                                     </View>
                                     <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
                                 </TouchableOpacity>
@@ -201,9 +197,7 @@ export default function AboutScreen() {
                         </View>
                     )}
 
-                    <Text style={styles.footerText}>
-                        © 2026 Skaneo. Tous droits réservés.
-                    </Text>
+                    <Text style={styles.footerText}>{t("about_footer")}</Text>
                 </ScrollView>
             </SafeAreaView>
         </>
