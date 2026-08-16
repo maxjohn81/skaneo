@@ -1,13 +1,10 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Dimensions, Vibration, Platform, PermissionsAndroid } from "react-native";
 import TextRecognition from "@react-native-ml-kit/text-recognition";
-import * as ImageManipulator from "expo-image-manipulator";
 import { detectOperator, ScanResult } from "@/utils/detectOperator";
 import RNImmediatePhoneCall from "react-native-immediate-phone-call";
 import * as ImagePicker from "expo-image-picker";
 
-const FRAME_WIDTH = 320;
-const FRAME_HEIGHT = 180;
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -21,6 +18,7 @@ export function useCardScanner(
   const [result, setResult] = useState<ScanResult | null>(null);
   const [scanning, setScanning] = useState(true);
   const [viewSize, setViewSize] = useState({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+  const [rawDigits, setRawDigits] = useState<string>("");
 
   const onCameraLayout = useCallback((event: any) => {
     const { width, height } = event.nativeEvent.layout;
@@ -47,24 +45,13 @@ export function useCardScanner(
           shutterSound: false,
         });
 
-        const scaleX = photo.width / viewSize.width;
-        const scaleY = photo.height / viewSize.height;
-
-        const crop = {
-          originX: (viewSize.width / 2 - FRAME_WIDTH / 2) * scaleX,
-          originY: (viewSize.height / 2 - FRAME_HEIGHT / 2) * scaleY,
-          width: FRAME_WIDTH * scaleX,
-          height: FRAME_HEIGHT * scaleY,
-        };
-
-        const cropped = await ImageManipulator.manipulateAsync(
-          photo.uri,
-          [{ crop }],
-          { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-        );
-
-        const ocr = await TextRecognition.recognize(cropped.uri);
+        const ocr = await TextRecognition.recognize(photo.uri);
         const text = ocr.text || "";
+
+        const digitsOnly = text.replace(/\D/g, "");
+        if (digitsOnly.length > 0) {
+          setRawDigits(digitsOnly);
+        }
 
         const detected = detectOperator(text);
 
@@ -180,7 +167,8 @@ export function useCardScanner(
     detectedRef.current = false;
     setResult(null);
     setScanning(true);
+    setRawDigits("");
   };
 
-  return { result, scanning, resetScan, scanFromGallery, onCameraLayout, FRAME_WIDTH, FRAME_HEIGHT };
+  return { result, scanning, resetScan, scanFromGallery,rawDigits, onCameraLayout };
 }

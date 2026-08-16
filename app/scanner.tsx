@@ -4,19 +4,25 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCardScanner } from "@/hooks/useCardScanner";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useColorScheme } from "react-native";
 
 export default function ScannerScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<any>(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
+  const colorScheme = useColorScheme(); // "light" | "dark" | null
+  const isDark = colorScheme === "dark";
 
-  const { result, resetScan, scanFromGallery, onCameraLayout, FRAME_WIDTH, FRAME_HEIGHT } = useCardScanner(
-    cameraRef,
-    permission?.granted,
-    cameraReady
-  );
-
+  const {
+    result,
+    resetScan,
+    scanFromGallery,
+    onCameraLayout,
+    rawDigits,
+  } = useCardScanner(cameraRef, permission?.granted, cameraReady);
+  const insets = useSafeAreaInsets();
   if (!permission) return <View style={styles.safeArea} />;
 
   if (!permission.granted) {
@@ -83,42 +89,51 @@ export default function ScannerScreen() {
           </Pressable>
         </View>
 
-        <View style={styles.overlay}>
-          <View
-            style={[
-              styles.frame,
-              { width: FRAME_WIDTH, height: FRAME_HEIGHT },
-              result && styles.frameSuccess,
-            ]}
-          />
+        {result && (
+          <View style={styles.overlay}>
+            <View style={styles.resultCard}>
+              <Text style={styles.text}>
+                ✔ {result.operator} détecté : {result.number}
+              </Text>
 
-          <View style={styles.resultCard}>
-            <Text style={styles.text}>
-              {result
-                ? `✔ ${result.operator} détecté : ${result.number}`
-                : "Place la carte dans le cadre"}
-            </Text>
-
-            {result && (
               <Pressable onPress={resetScan} style={styles.rescanButton}>
                 <Ionicons name="scan-outline" size={18} color="white" />
                 <Text style={styles.rescanButtonText}>Scanner une autre carte</Text>
               </Pressable>
-            )}
+            </View>
           </View>
-        </View>
+        )}
 
         {!result && (
-          <View style={styles.bottomBar}>
+          <View
+            style={[
+              styles.tabBar,
+              { bottom: insets.bottom + 16 },
+              isDark ? styles.tabBarDark : styles.tabBarLight,
+            ]}
+          >
+            <View style={styles.tabBarInfo}>
+              <Text style={[styles.tabBarLabel, isDark && styles.tabBarLabelDark]}>
+                Numéro détecté
+              </Text>
+              <Text style={styles.tabBarDigits} numberOfLines={1}>
+                {rawDigits || "—"}
+              </Text>
+            </View>
+
             <Pressable
               onPress={scanFromGallery}
-              style={styles.galleryFab}
+              style={styles.tabBarAction}
               accessibilityRole="button"
               accessibilityLabel="Importer une photo depuis la galerie"
             >
-              <Ionicons name="image" size={24} color="white" />
+              <View style={[styles.galleryIcon, isDark && styles.galleryIconDark]}>
+                <Ionicons name="image" size={20} color={isDark ? "white" : "#1E293B"} />
+              </View>
+              <Text style={[styles.tabBarActionLabel, isDark && styles.tabBarActionLabelDark]}>
+                Importer
+              </Text>
             </Pressable>
-            <Text style={styles.galleryFabLabel}>Importer une photo</Text>
           </View>
         )}
       </SafeAreaView>
@@ -151,6 +166,25 @@ const styles = StyleSheet.create({
     bottom: 40,
     left: 0,
     right: 0,
+    alignItems: "center",
+    gap: 16,
+  },
+
+  digitsPill: {
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+
+  digitsText: {
+    color: "#FFBF00",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+
+  bottomActions: {
     alignItems: "center",
     gap: 8,
   },
@@ -319,5 +353,80 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+
+  // remplace le tabBar existant par :
+  tabBar: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  tabBarDark: {
+    backgroundColor: "rgba(20,20,20,0.85)",
+  },
+
+  tabBarLight: {
+    backgroundColor: "rgba(255,255,255,0.92)",
+  },
+
+  tabBarLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "rgba(30,41,59,0.6)", // texte foncé par défaut (mode clair)
+  },
+
+  tabBarLabelDark: {
+    color: "rgba(255,255,255,0.5)",
+  },
+
+  tabBarActionLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "rgba(30,41,59,0.7)", // mode clair par défaut
+  },
+
+  tabBarActionLabelDark: {
+    color: "rgba(255,255,255,0.7)",
+  },
+
+  galleryIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(30,41,59,0.08)", // mode clair par défaut
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  galleryIconDark: {
+    backgroundColor: "rgba(255,255,255,0.12)",
+  },
+
+  tabBarInfo: {
+    flex: 1,
+    paddingLeft: 8,
+    paddingRight: 12,
+  },
+
+
+
+  tabBarDigits: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#FFBF00",
+    letterSpacing: 0.5,
+    marginTop: 2,
+  },
+
+  tabBarAction: {
+    alignItems: "center",
+    gap: 4,
   },
 });
