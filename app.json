@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.maxjohn.skaneo"
+      "bundleIdentifier": "com.maxjohn.skaneo",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +24,8 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.maxjohn.skaneo",
       "permissions": [
-        "android.permission.CALL_PHONE"
+        "android.permission.CALL_PHONE",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
@@ -51,7 +55,8 @@
             "buildArchs": [
               "arm64-v8a"
             ],
-            "enableProguardInReleaseBuilds": true
+            "enableProguardInReleaseBuilds": true,
+            "enableMinifyInReleaseBuilds": true
           }
         }
       ],
