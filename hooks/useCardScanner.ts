@@ -55,41 +55,67 @@ export function useCardScanner(
           setRawDigits(digitsOnly);
         }
 
-        const detected = detectOperator(text);
+        const multiscanEnabled = (await AsyncStorage.getItem(MULTISCAN_STORAGE_KEY)) === "true";
 
-        if (detected && !detectedRef.current) {
-          const multiscanEnabled = (await AsyncStorage.getItem(MULTISCAN_STORAGE_KEY)) === "true";
+        if (multiscanEnabled && !detectedRef.current) {
           const maxRaw = await AsyncStorage.getItem(MULTISCAN_MAX_STORAGE_KEY);
           const maxCount = maxRaw ? parseInt(maxRaw, 10) : MULTISCAN_MAX_DEFAULT;
 
-          detectedRef.current = true;
-          setResult(detected);
-          Vibration.vibrate(200);
+          const blocks = ocr.blocks || [];
+          const found: ScanResult[] = [];
+          const seenUssd = new Set<string>();
 
-          setTimeout(() => {
-            if (Platform.OS === "android") {
-              try {
-                RNImmediatePhoneCall.immediatePhoneCall(detected.ussd);
-              } catch (e) {
-                console.log("immediatePhoneCall error:", e);
+          for (const block of blocks) {
+            if (found.length >= maxCount) break;
+            const d = detectOperator(block.text || "");
+            if (d && !seenUssd.has(d.ussd)) {
+              seenUssd.add(d.ussd);
+              found.push(d);
+            }
+          }
+
+          if (found.length > 0) {
+            detectedRef.current = true;
+            setResult(found[found.length - 1]);
+            setScanning(false);
+            Vibration.vibrate(200);
+            setScannedItems(found);
+
+            (async () => {
+              for (let i = 0; i < found.length; i++) {
+                if (Platform.OS === "android") {
+                  try {
+                    RNImmediatePhoneCall.immediatePhoneCall(found[i].ussd);
+                  } catch (e) {
+                    console.log("immediatePhoneCall error:", e);
+                  }
+                }
+                if (i < found.length - 1) {
+                  await delay(1500);
+                }
               }
-            }
-          }, 300);
+            })();
+          }
+        } else if (!multiscanEnabled && !detectedRef.current) {
+          const detected = detectOperator(text);
 
-          setScannedItems((prev) => {
-            const next = [...prev, detected];
+          if (detected) {
+            detectedRef.current = true;
+            setResult(detected);
+            setScanning(false);
+            Vibration.vibrate(200);
+            setScannedItems((prev) => [...prev, detected]);
 
-            if (multiscanEnabled && next.length < maxCount) {
-              setTimeout(() => {
-                detectedRef.current = false;
-                setResult(null);
-              }, 2000);
-            } else {
-              setScanning(false);
-            }
-
-            return next;
-          });
+            setTimeout(() => {
+              if (Platform.OS === "android") {
+                try {
+                  RNImmediatePhoneCall.immediatePhoneCall(detected.ussd);
+                } catch (e) {
+                  console.log("immediatePhoneCall error:", e);
+                }
+              }
+            }, 300);
+          }
         }
       } catch (e) {
         console.log("scan error:", e);
@@ -189,5 +215,5 @@ export function useCardScanner(
     setScannedItems([]);
   };
 
-  return { result, scanning, resetScan, scanFromGallery, rawDigits, onCameraLayout,scannedItems };
+  return { result, scanning, resetScan, scanFromGallery, rawDigits, onCameraLayout, scannedItems };
 }

@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +7,8 @@ import { useCardScanner } from "@/hooks/useCardScanner";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MULTISCAN_STORAGE_KEY } from "@/constants/settings";
 
 export default function ScannerScreen() {
   const { t } = useTranslation();
@@ -16,6 +18,13 @@ export default function ScannerScreen() {
   const [torchOn, setTorchOn] = useState(false);
   const colorScheme = useColorScheme(); // "light" | "dark" | null
   const isDark = colorScheme === "dark";
+  const [multiscanEnabled, setMultiscanEnabled] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem(MULTISCAN_STORAGE_KEY).then((value) => {
+      setMultiscanEnabled(value === "true");
+    });
+  }, []);
 
   const {
     result,
@@ -75,16 +84,25 @@ export default function ScannerScreen() {
         <View style={styles.topBar}>
           <View style={{ width: 40 }} />
 
-          <View style={styles.statusPill}>
-            <View
-              style={[
-                styles.statusDot,
-                { backgroundColor: result ? "#FFBF00" : "#22C55E" },
-              ]}
-            />
-            <Text style={styles.statusText}>
-              {result ? t("scanner_status_detected") : t("scanner_status_scanning")}
-            </Text>
+          <View style={{ alignItems: "center", gap: 6 }}>
+            <View style={styles.statusPill}>
+              <View
+                style={[
+                  styles.statusDot,
+                  { backgroundColor: result ? "#FFBF00" : "#22C55E" },
+                ]}
+              />
+              <Text style={styles.statusText}>
+                {result ? t("scanner_status_detected") : t("scanner_status_scanning")}
+              </Text>
+            </View>
+
+            {multiscanEnabled && (
+              <View style={styles.multiscanBadge}>
+                <Ionicons name="layers" size={12} color="#FFFFFF" />
+                <Text style={styles.multiscanBadgeText}>{t("scanner_multiscan_badge")}</Text>
+              </View>
+            )}
           </View>
 
           <Pressable
@@ -165,6 +183,20 @@ const styles = StyleSheet.create({
 
   overlaySafeArea: {
     ...StyleSheet.absoluteFillObject,
+  },
+  multiscanBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(255,191,0,0.9)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  multiscanBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#1E293B",
   },
   scannedList: {
     position: "absolute",

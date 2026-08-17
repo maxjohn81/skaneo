@@ -10,6 +10,8 @@ export const translations = {
     terms_continue_button: "Continuer",
     terms_loading: "Chargement...",
 
+    scanner_multiscan_badge: "Mode multiscan",
+
     // Language select
     language_select_title: "Bienvenue sur Skaneo",
     language_select_subtitle: "Choisis ta langue",
@@ -116,7 +118,9 @@ export const translations = {
     terms_continue_button: "Manohy",
     terms_loading: "Miandry...",
 
-    
+    scanner_multiscan_badge: "Fomba multiscan",
+
+
     // Language select
     language_select_title: "Tongasoa eto amin'i Skaneo",
     language_select_subtitle: "Safidio ny fiteninao",

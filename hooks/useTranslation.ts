@@ -20,13 +20,13 @@ async function initLanguage() {
       const deviceLocale = Localization.getLocales()[0]?.languageCode;
       currentLanguage = deviceLocale === "mg" ? "mg" : "fr";
     }
-    listeners.forEach((cb) => cb(currentLanguage));
   } catch {
     currentLanguage = DEFAULT_LANGUAGE;
   }
+  listeners.forEach((cb) => cb(currentLanguage));
 }
 
-initLanguage();
+const languageReadyPromise = initLanguage();
 
 export async function setLanguage(lang: Language) {
   currentLanguage = lang;
@@ -39,6 +39,14 @@ export function useTranslation() {
 
   useEffect(() => {
     listeners.add(setLang);
+
+    // Sécurité anti race-condition : une fois que l'initialisation
+    // (lecture AsyncStorage) est terminée, on resynchronise l'état local
+    // avec la valeur réelle, même si le listener a été enregistré trop tard.
+    languageReadyPromise.then(() => {
+      setLang(currentLanguage);
+    });
+
     return () => {
       listeners.delete(setLang);
     };
