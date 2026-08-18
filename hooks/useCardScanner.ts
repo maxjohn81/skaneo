@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { Dimensions, Vibration, Platform, PermissionsAndroid } from "react-native";
+import { Dimensions, Vibration, Platform, PermissionsAndroid, AppState } from "react-native";
 import TextRecognition from "@react-native-ml-kit/text-recognition";
 import { detectOperator, ScanResult } from "@/utils/detectOperator";
 import RNImmediatePhoneCall from "react-native-immediate-phone-call";
@@ -21,6 +21,12 @@ export function useCardScanner(
   const [viewSize, setViewSize] = useState({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
   const [rawDigits, setRawDigits] = useState<string>("");
   const [scannedItems, setScannedItems] = useState<ScanResult[]>([]);
+  const [batchExecutionStatus, setBatchExecutionStatus] = useState<{
+    active: boolean;
+    currentIndex: number;
+    total: number;
+    countdown: number;
+  } | null>(null);
 
   const onCameraLayout = useCallback((event: any) => {
     const { width, height } = event.nativeEvent.layout;
@@ -30,6 +36,45 @@ export function useCardScanner(
   const isRunningRef = useRef(true);
   const isBusyRef = useRef(false);
   const detectedRef = useRef(false);
+
+
+  const waitForCallToFinish = (): Promise<void> => {
+    return new Promise((resolve) => {
+      let wasBackgrounded = false;
+      let resolved = false;
+
+      const finish = () => {
+        if (resolved) return;
+        resolved = true;
+        subscription.remove();
+        resolve();
+      };
+
+      const subscription = AppState.addEventListener("change", (state) => {
+        if (state !== "active") {
+          wasBackgrounded = true;
+        } else if (wasBackgrounded && state === "active") {
+          finish();
+        }
+      });
+
+      // Sécurité : si l'app ne repasse jamais en arrière-plan (cas double SIM
+      // où l'utilisateur met du temps à choisir), on ne bloque pas indéfiniment.
+      setTimeout(finish, 4000);
+    });
+  };
+
+  const waitWithCountdown = async (
+    seconds: number,
+    onTick: (remaining: number) => void
+  ): Promise<void> => {
+    for (let s = seconds; s > 0; s--) {
+      onTick(s);
+      await delay(1000);
+    }
+    onTick(0);
+  };
+
 
   const scanLoop = async () => {
     while (isRunningRef.current) {
@@ -83,6 +128,13 @@ export function useCardScanner(
 
             (async () => {
               for (let i = 0; i < found.length; i++) {
+                setBatchExecutionStatus({
+                  active: true,
+                  currentIndex: i,
+                  total: found.length,
+                  countdown: 0,
+                });
+
                 if (Platform.OS === "android") {
                   try {
                     RNImmediatePhoneCall.immediatePhoneCall(found[i].ussd);
@@ -90,10 +142,24 @@ export function useCardScanner(
                     console.log("immediatePhoneCall error:", e);
                   }
                 }
+
                 if (i < found.length - 1) {
-                  await delay(1500);
+                  // Compte à rebours visible immédiat (cas mono-SIM, appel rapide),
+                  // en parallèle de l'attente réelle de fin d'appel (cas double SIM).
+                  const countdownPromise = waitWithCountdown(3, (remaining) => {
+                    setBatchExecutionStatus({
+                      active: true,
+                      currentIndex: i,
+                      total: found.length,
+                      countdown: remaining,
+                    });
+                  });
+
+                  await Promise.all([waitForCallToFinish(), countdownPromise]);
                 }
               }
+
+              setBatchExecutionStatus(null);
             })();
           }
         } else if (!multiscanEnabled && !detectedRef.current) {
@@ -215,5 +281,8 @@ export function useCardScanner(
     setScannedItems([]);
   };
 
-  return { result, scanning, resetScan, scanFromGallery, rawDigits, onCameraLayout, scannedItems };
+  return {
+    result, scanning, resetScan, scanFromGallery, rawDigits, onCameraLayout,
+    scannedItems, batchExecutionStatus,
+  };
 }

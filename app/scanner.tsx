@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRef, useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import { View, Text, StyleSheet, Pressable, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCardScanner } from "@/hooks/useCardScanner";
@@ -32,7 +32,8 @@ export default function ScannerScreen() {
     scanFromGallery,
     onCameraLayout,
     rawDigits,
-    scannedItems
+    scannedItems,
+    batchExecutionStatus
   } = useCardScanner(cameraRef, permission?.granted, cameraReady);
   const insets = useSafeAreaInsets();
   if (!permission) return <View style={styles.safeArea} />;
@@ -127,10 +128,24 @@ export default function ScannerScreen() {
                 ✔ {result.operator} détecté : {result.number}
               </Text>
 
-              <Pressable onPress={resetScan} style={styles.rescanButton}>
-                <Ionicons name="scan-outline" size={18} color="white" />
-                <Text style={styles.rescanButtonText}>{t("scanner_rescan_button")}</Text>
-              </Pressable>
+              {batchExecutionStatus?.active && (
+                <View style={styles.batchStatusRow}>
+                  <ActivityIndicator size="small" color="#FFBF00" />
+                  <Text style={styles.batchStatusText}>
+                    {t("scanner_batch_executing")} {batchExecutionStatus.currentIndex + 1}/{batchExecutionStatus.total}
+                    {batchExecutionStatus.countdown > 0
+                      ? ` · ${t("scanner_batch_next_in")} ${batchExecutionStatus.countdown}${t("scanner_batch_seconds")}`
+                      : "..."}
+                  </Text>
+                </View>
+              )}
+
+              {!batchExecutionStatus?.active && (
+                <Pressable onPress={resetScan} style={styles.rescanButton}>
+                  <Ionicons name="scan-outline" size={18} color="white" />
+                  <Text style={styles.rescanButtonText}>{t("scanner_rescan_button")}</Text>
+                </Pressable>
+              )}
             </View>
           </View>
         )}
@@ -183,6 +198,21 @@ const styles = StyleSheet.create({
 
   overlaySafeArea: {
     ...StyleSheet.absoluteFillObject,
+  },
+  batchStatusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 12,
+    backgroundColor: "#FFF8E6",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+  },
+  batchStatusText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1E293B",
   },
   multiscanBadge: {
     flexDirection: "row",

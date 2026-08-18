@@ -5,6 +5,11 @@ export const DEFAULT_LANGUAGE: Language = "fr";
 
 export const translations = {
   fr: {
+    scanner_batch_executing: "Crédit",
+    scanner_batch_next_in: "suivant dans",
+    scanner_batch_seconds: "s",
+
+
     terms_header_title: "Conditions d'utilisation",
     terms_checkbox_label: "J'ai lu et j'accepte les conditions d'utilisation de Skaneo.",
     terms_continue_button: "Continuer",
@@ -113,6 +118,11 @@ export const translations = {
   },
 
   mg: {
+    scanner_batch_executing: "Crédit",
+    scanner_batch_next_in: "manaraka afaka",
+    scanner_batch_seconds: "s",
+
+
     terms_header_title: "Fepetra fampiasana",
     terms_checkbox_label: "Efa novakiako sy ekeko ny fepetra fampiasana an'i Skaneo.",
     terms_continue_button: "Manohy",
