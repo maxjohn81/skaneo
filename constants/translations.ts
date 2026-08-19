@@ -15,7 +15,7 @@ export const translations = {
     terms_continue_button: "Continuer",
     terms_loading: "Chargement...",
 
-    scanner_multiscan_badge: "Mode multiscan",
+    scanner_multiscan_badge: "Multi Skaneo",
 
     // Language select
     language_select_title: "Bienvenue sur Skaneo",
@@ -40,7 +40,7 @@ export const translations = {
     // Paramètres
     settings_title: "Paramètres",
     settings_language: "Langue",
-    settings_multiscan_title: "Scan multiple",
+    settings_multiscan_title: "Multi Skaneo",
     settings_multiscan_description:
       "Reprend automatiquement le scan après chaque carte, pour en recharger plusieurs à la suite sans revenir à l'accueil.",
     settings_multiscan_count: "Nombre de cartes par session",
@@ -128,7 +128,7 @@ export const translations = {
     terms_continue_button: "Manohy",
     terms_loading: "Miandry...",
 
-    scanner_multiscan_badge: "Fomba multiscan",
+    scanner_multiscan_badge: "Multi Skaneo",
 
 
     // Language select
@@ -154,7 +154,7 @@ export const translations = {
     // Paramètres
     settings_title: "Fandrindrana",
     settings_language: "Fiteny",
-    settings_multiscan_title: "Scan maromaro",
+    settings_multiscan_title: "Multi Skaneo",
     settings_multiscan_description:
       "Manohy scan avy hatrany rehefa avy nandray crédit iray, mba hahafahana mamerina karatra maromaro.",
     settings_multiscan_count: "Isan'ny karatra isaky ny fotoana",
