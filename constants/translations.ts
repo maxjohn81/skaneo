@@ -52,7 +52,7 @@ export const translations = {
     scanner_permission_subtitle:
       "Nous avons besoin de la caméra pour scanner ta carte automatiquement",
     scanner_permission_button: "Autoriser la caméra",
-    scanner_import_label: "Importer",
+    scanner_import_label: "Image",
     scanner_digits_label: "Numéro détecté",
     scanner_rescan_button: "Scanner une autre carte",
 
@@ -139,9 +139,9 @@ export const translations = {
 
     // Accueil
     home_tagline: "Manatsotra ny asa finday ataonao",
-    home_scan_title: "Manaova scan crédit",
+    home_scan_title: "Manao scan crédit",
     home_scan_description: "Skaneo amin'ny fomba tsotra ny crédit nao",
-    home_scan_button: "Manaova scan crédit",
+    home_scan_button: "Manao scan crédit",
     home_withdraw_title: "Manao retrait",
     home_withdraw_description: "Ataovy amin'ny fomba tsotra sady aingana ny retrait izay ho ataonao",
     home_withdraw_button: "Manao retrait",
@@ -166,7 +166,7 @@ export const translations = {
     scanner_permission_subtitle:
       "Ilaina ny kamera mba hahafahana mizaha ny crédit",
     scanner_permission_button: "Alefaso ny kamera",
-    scanner_import_label: "Ampidiro",
+    scanner_import_label: "Sary",
     scanner_digits_label: "Nomerao hita",
     scanner_rescan_button: "Mizaha crédit hafa",
 
