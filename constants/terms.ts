@@ -1,6 +1,8 @@
-export const TERMS_VERSION = "1.0.1";
+import { APP_VERSION } from "./storage_key";
 
-export const TERMS_CONTENT_FR = `Dernière mise à jour : Août 2026
+export const TERMS_VERSION = APP_VERSION;
+
+export const TERMS_CONTENT_FR = `Dernière mise à jour : septembre 2026
 
 1. À propos de Skaneo
 
