@@ -61,7 +61,8 @@
         }
       ],
       "expo-localization",
-      "expo-font"
+      "expo-font",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,
