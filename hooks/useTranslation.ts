@@ -53,8 +53,14 @@ export function useTranslation() {
   }, []);
 
   const t = useCallback(
-    (key: keyof typeof translations["fr"]) => {
-      return translations[lang][key] ?? translations.fr[key] ?? key;
+    (key: keyof typeof translations["fr"], params?: Record<string, string | number>) => {
+      const value = translations[lang][key] ?? translations.fr[key] ?? key;
+      if (!params) return value;
+
+      return Object.entries(params).reduce(
+        (text, [paramKey, paramValue]) => text.replace(`{${paramKey}}`, String(paramValue)),
+        value
+      );
     },
     [lang]
   );

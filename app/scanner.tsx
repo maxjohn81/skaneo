@@ -9,6 +9,7 @@ import { useColorScheme } from "react-native";
 import { useTranslation } from "@/hooks/useTranslation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MULTISCAN_STORAGE_KEY } from "@/constants/settings";
+import { sendLocalNotification, USAGE_NOTIFICATION_ID } from "@/services/notifications";
 
 export default function ScannerScreen() {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ export default function ScannerScreen() {
   const colorScheme = useColorScheme(); // "light" | "dark" | null
   const isDark = colorScheme === "dark";
   const [multiscanEnabled, setMultiscanEnabled] = useState(false);
+  const usageNotificationSent = useRef(false);
 
   useEffect(() => {
     AsyncStorage.getItem(MULTISCAN_STORAGE_KEY).then((value) => {
@@ -36,6 +38,24 @@ export default function ScannerScreen() {
     batchExecutionStatus
   } = useCardScanner(cameraRef, permission?.granted, cameraReady);
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (!result) {
+      usageNotificationSent.current = false;
+      return;
+    }
+    if (usageNotificationSent.current) return;
+
+    usageNotificationSent.current = true;
+    void sendLocalNotification(
+      t("notification_scan_title"),
+      t("notification_scan_body", {
+        operator: result.operator,
+        count: scannedItems.length,
+      }),
+      USAGE_NOTIFICATION_ID
+    ).catch((error) => console.warn("Unable to send scan notification", error));
+  }, [result, scannedItems.length, t]);
   if (!permission) return <View style={styles.safeArea} />;
 
   if (!permission.granted) {

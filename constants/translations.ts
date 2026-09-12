@@ -55,6 +55,8 @@ export const translations = {
     scanner_import_label: "Image",
     scanner_digits_label: "Numéro détecté",
     scanner_rescan_button: "Scanner une autre carte",
+    notification_scan_title: "Scan terminé",
+    notification_scan_body: "{count} carte(s) {operator} détectée(s).",
 
     // Retrait
     withdraw_title: "Faire un retrait",
@@ -169,6 +171,8 @@ export const translations = {
     scanner_import_label: "Sary",
     scanner_digits_label: "Nomerao hita",
     scanner_rescan_button: "Mizaha crédit hafa",
+    notification_scan_title: "Vita ny scan",
+    notification_scan_body: "Karatra {count} avy amin'i {operator} hita.",
 
     // Retrait
     withdraw_title: "Manaisotra vola",
