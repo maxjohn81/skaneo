@@ -217,7 +217,11 @@ const styles = StyleSheet.create({
   camera: { flex: 1 },
 
   overlaySafeArea: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
   },
   batchStatusRow: {
     flexDirection: "row",
@@ -272,11 +276,16 @@ const styles = StyleSheet.create({
   },
 
   topBar: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingTop: 16,
+    zIndex: 10,
   },
   bottomBar: {
     position: "absolute",
