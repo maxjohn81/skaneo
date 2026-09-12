@@ -36,6 +36,7 @@ export const translations = {
     // Menu
     menu_settings: "Paramètres",
     menu_about: "À propos",
+    menu_developer: "Développeur",
 
     // Paramètres
     settings_title: "Paramètres",
@@ -108,6 +109,17 @@ export const translations = {
     about_secret_locked_title: "Raccourcis masqués",
     about_secret_locked_text: "L'accès aux raccourcis a été masqué.",
 
+    // Développeur
+    developer_title: "Le développeur",
+    developer_created_by: "Une application créée par",
+    developer_photo_hint: "Cliquez sur l’image 😂",
+    developer_story_title: "Pourquoi Skaneo ?",
+    developer_story:
+      "J'en avais assez de devoir saisir manuellement de longs codes de recharge. J'ai donc créé Skaneo pour recharger plus rapidement et plus simplement. C'est une application que j'utilise moi-même au quotidien, née d'un besoin réel et pensée pour faire gagner du temps.",
+    developer_support_title: "Soutenir Skaneo",
+    developer_support_text:
+      "Si Skaneo te fait gagner du temps, pense à la télécharger, à la partager autour de toi et à en parler à tes proches. Ton soutien encourage son amélioration et le développement de nouvelles fonctionnalités.",
+
     // Secret / Raccourcis
     secret_title: "Raccourcis",
     secret_ios_title: "Non disponible sur iOS",
@@ -152,6 +164,7 @@ export const translations = {
     // Menu
     menu_settings: "Fandrindrana",
     menu_about: "Momba anay",
+    menu_developer: "Mpamorona",
 
     // Paramètres
     settings_title: "Fandrindrana",
@@ -222,6 +235,17 @@ export const translations = {
     about_secret_unlocked_text: "Hita ao amin'ity pejy ity izao ny fidirana amin'ny fandalinana haingana.",
     about_secret_locked_title: "Fandalinana haingana miafina",
     about_secret_locked_text: "Voafina ny fidirana amin'ny fandalinana haingana.",
+
+    // Mpamorona
+    developer_title: "Momba ny mpamorona",
+    developer_created_by: "Rindrankajy noforonin'i",
+    developer_photo_hint: "Tsindrio ne io sary io e 😂",
+    developer_story_title: "Nahoana no noforonina i Skaneo?",
+    developer_story:
+      "Leo manoratra tanana kaody recharge lava aho, ka namorona an'i Skaneo mba hahafahana manao recharge haingana sy tsotra kokoa. Izaho koa dia mampiasa azy isan'andro, satria filàna tena niainako no niandohany.",
+    developer_support_title: "Tohano i Skaneo",
+    developer_support_text:
+      "Raha manamora ny fiainanao i Skaneo, ampidino, zarao amin'ny manodidina anao ary ampahafantaro ny namanao. Ny fanohananao dia manampy amin'ny fanatsarana azy sy amin'ny famoronana asa vaovao.",
 
     // Secret / Raccourcis
     secret_title: "Fandalinana haingana",

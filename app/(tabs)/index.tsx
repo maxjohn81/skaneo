@@ -162,6 +162,19 @@ export default function HomeScreen() {
                 <Ionicons name="information-circle-outline" size={20} color="#1E293B" />
                 <Text style={styles.menuItemText}>{t("menu_about")}</Text>
               </TouchableOpacity>
+
+              <View style={styles.menuSeparator} />
+
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  setMenuVisible(false);
+                  router.push("/developer");
+                }}
+              >
+                <Ionicons name="code-slash-outline" size={20} color="#1E293B" />
+                <Text style={styles.menuItemText}>{t("menu_developer")}</Text>
+              </TouchableOpacity>
             </View>
           </Pressable>
         </Modal>

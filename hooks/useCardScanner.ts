@@ -212,23 +212,67 @@ export function useCardScanner(
     try {
       const ocr = await TextRecognition.recognize(imageUri);
       const text = ocr.text || "";
-      const detected = detectOperator(text);
+      const multiscanEnabled = (await AsyncStorage.getItem(MULTISCAN_STORAGE_KEY)) === "true";
+      const found: ScanResult[] = [];
 
-      if (detected) {
+      if (multiscanEnabled) {
+        const maxRaw = await AsyncStorage.getItem(MULTISCAN_MAX_STORAGE_KEY);
+        const maxCount = maxRaw ? parseInt(maxRaw, 10) : MULTISCAN_MAX_DEFAULT;
+        const seenUssd = new Set<string>();
+
+        for (const block of ocr.blocks || []) {
+          if (found.length >= maxCount) break;
+          const detected = detectOperator(block.text || "");
+          if (detected && !seenUssd.has(detected.ussd)) {
+            seenUssd.add(detected.ussd);
+            found.push(detected);
+          }
+        }
+      } else {
+        const detected = detectOperator(text);
+        if (detected) found.push(detected);
+      }
+
+      if (found.length > 0) {
         detectedRef.current = true;
-        setResult(detected);
+        setResult(found[found.length - 1]);
         setScanning(false);
+        setScannedItems(found);
         Vibration.vibrate(200);
 
-        setTimeout(() => {
-          if (Platform.OS === "android") {
-            try {
-              RNImmediatePhoneCall.immediatePhoneCall(detected.ussd);
-            } catch (e) {
-              console.log("immediatePhoneCall error:", e);
+        (async () => {
+          for (let i = 0; i < found.length; i++) {
+            setBatchExecutionStatus({
+              active: true,
+              currentIndex: i,
+              total: found.length,
+              countdown: 0,
+            });
+
+            if (Platform.OS === "android") {
+              try {
+                RNImmediatePhoneCall.immediatePhoneCall(found[i].ussd);
+              } catch (e) {
+                console.log("immediatePhoneCall error:", e);
+              }
+            }
+
+            if (i < found.length - 1) {
+              const countdownPromise = waitWithCountdown(3, (remaining) => {
+                setBatchExecutionStatus({
+                  active: true,
+                  currentIndex: i,
+                  total: found.length,
+                  countdown: remaining,
+                });
+              });
+
+              await Promise.all([waitForCallToFinish(), countdownPromise]);
             }
           }
-        }, 300);
+
+          setBatchExecutionStatus(null);
+        })();
       } else {
         console.log("Aucun code détecté sur l'image importée");
       }

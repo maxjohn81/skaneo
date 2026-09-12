@@ -44,6 +44,7 @@ export default function ScannerScreen() {
       usageNotificationSent.current = false;
       return;
     }
+    if (scannedItems.length === 0) return;
     if (usageNotificationSent.current) return;
 
     usageNotificationSent.current = true;
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
 
   topBar: {
     position: "absolute",
-    top: 0,
+    top: 18,
     left: 0,
     right: 0,
     flexDirection: "row",
