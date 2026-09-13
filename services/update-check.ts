@@ -14,14 +14,20 @@ type VersionManifest = {
 };
 
 function compareVersions(left: string, right: string): number {
-  const parse = (value: string) =>
-    value.split(".").map((part) => Number.parseInt(part, 10) || 0);
+  const parse = (value: string) => {
+    const parts = value.split(".");
+    if (parts.length !== 3 || parts.some((part) => !/^\d+$/.test(part))) {
+      return null;
+    }
+    return parts.map((part) => Number.parseInt(part, 10));
+  };
+
   const leftParts = parse(left);
   const rightParts = parse(right);
-  const length = Math.max(leftParts.length, rightParts.length);
+  if (!leftParts || !rightParts) return 0;
 
-  for (let index = 0; index < length; index += 1) {
-    const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
+  for (let index = 0; index < 3; index += 1) {
+    const difference = leftParts[index] - rightParts[index];
     if (difference !== 0) return difference;
   }
   return 0;
