@@ -1,11 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { Alert, Linking } from "react-native";
 import { APP_VERSION } from "@/constants/storage_key";
 import { sendLocalNotification } from "@/services/notifications";
 
 const VERSION_URL = "https://skaneo.vercel.app/api/version";
-const UPDATE_NOTIFIED_VERSION_KEY = "skaneo_update_notified_version";
 
 type VersionManifest = {
   version: string;
@@ -59,13 +57,11 @@ export async function checkForUpdates(notificationsEnabled: boolean): Promise<vo
 
     if (compareVersions(manifest.version, getInstalledVersion()) <= 0) return;
 
-    const notifiedVersion = await AsyncStorage.getItem(UPDATE_NOTIFIED_VERSION_KEY);
-    if (notificationsEnabled && notifiedVersion !== manifest.version) {
-      await AsyncStorage.setItem(UPDATE_NOTIFIED_VERSION_KEY, manifest.version);
+    if (notificationsEnabled) {
       await sendLocalNotification(
         "Nouvelle version disponible",
         `Skaneo ${manifest.version} est disponible au téléchargement.`,
-        "skaneo-update"
+        `skaneo-update-${manifest.version}-${Date.now()}`
       );
     }
 
