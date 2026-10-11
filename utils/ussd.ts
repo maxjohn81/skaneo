@@ -11,6 +11,6 @@ export function buildUssdCode(
     case "airtel":
       return `*436*4*${phoneNumber}*${amount}*12#`;
     case "orange":
-      return `#114*8*${phoneNumber}*${phoneNumber}*${amount}#`;
+      return `#144*8*${phoneNumber}*${phoneNumber}*${amount}#`;
   }
 }
