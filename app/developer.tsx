@@ -2,7 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, Tabs } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   Image,
+  Linking,
   Modal,
   Pressable,
   ScrollView,
@@ -15,6 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "@/constants/colors";
+import { DEVELOPER_CONTACTS } from "@/constants/developer-contacts";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function DeveloperScreen() {
@@ -25,6 +28,15 @@ export default function DeveloperScreen() {
   const isDark = colorScheme === "dark";
   const bubbleLeft = Math.max(0, screenWidth / 2 - 4);
   const bubbleMaxWidth = Math.max(148, screenWidth - bubbleLeft - 16);
+
+  const openContact = async (url: string) => {
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      console.error("Unable to open developer contact", error);
+      Alert.alert(t("developer_title"), t("developer_contact_error"));
+    }
+  };
 
   return (
     <>
@@ -92,6 +104,30 @@ export default function DeveloperScreen() {
           <Ionicons name="heart-outline" size={24} color="#B8860B" />
           <Text style={styles.supportTitle}>{t("developer_support_title")}</Text>
           <Text style={styles.supportText}>{t("developer_support_text")}</Text>
+        </View>
+
+        <View style={styles.contactsCard}>
+          <Text style={styles.sectionTitle}>{t("developer_contacts_title")}</Text>
+          {DEVELOPER_CONTACTS.map((contact, index) => (
+            <TouchableOpacity
+              key={contact.id}
+              style={[
+                styles.contactRow,
+                index !== DEVELOPER_CONTACTS.length - 1 && styles.contactRowBorder,
+              ]}
+              onPress={() => void openContact(contact.url)}
+              activeOpacity={0.7}
+              accessibilityRole="link"
+              accessibilityLabel={`${contact.label}: ${contact.value}`}
+            >
+              <Ionicons name={contact.icon} size={21} color={contact.color} />
+              <View style={styles.contactText}>
+                <Text style={styles.contactLabel}>{contact.label}</Text>
+                <Text style={styles.contactValue}>{contact.value}</Text>
+              </View>
+              <Ionicons name="open-outline" size={18} color={COLORS.muted} />
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
       </SafeAreaView>
@@ -296,4 +332,25 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: "center",
   },
+  contactsCard: {
+    backgroundColor: "#F8FAFC",
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingTop: 18,
+    paddingBottom: 4,
+    marginTop: 16,
+  },
+  contactRow: {
+    minHeight: 58,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  contactRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  contactText: { flex: 1 },
+  contactLabel: { color: COLORS.text, fontSize: 14, fontWeight: "700" },
+  contactValue: { color: COLORS.muted, fontSize: 13, marginTop: 2 },
 });

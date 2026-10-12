@@ -156,6 +156,19 @@ export default function HomeScreen() {
                 style={styles.menuItem}
                 onPress={() => {
                   setMenuVisible(false);
+                  router.push("/secret");
+                }}
+              >
+                <Ionicons name="flash-outline" size={20} color="#1E293B" />
+                <Text style={styles.menuItemText}>{t("about_shortcuts")}</Text>
+              </TouchableOpacity>
+
+              <View style={styles.menuSeparator} />
+
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                  setMenuVisible(false);
                   router.push("/about/about");
                 }}
               >

@@ -1,49 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
-import { Alert, Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRef, useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { APP_VERSION, SECRET_STORAGE_KEY } from "@/constants/storage_key";
+import { APP_VERSION } from "@/constants/storage_key";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function AboutScreen() {
     const { t } = useTranslation();
-
-    // dans AboutScreen()
-    const [secretUnlocked, setSecretUnlocked] = useState(false);
-    const tapCountRef = useRef(0);
-    const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        AsyncStorage.getItem(SECRET_STORAGE_KEY).then((value) => {
-            if (value === "true") setSecretUnlocked(true);
-        });
-    }, []);
-
-    const handleLogoTap = () => {
-        tapCountRef.current += 1;
-
-        if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
-        tapTimerRef.current = setTimeout(() => {
-            tapCountRef.current = 0;
-        }, 2000);
-
-        if (tapCountRef.current >= 5) {
-            tapCountRef.current = 0;
-            setSecretUnlocked((prev) => {
-                const next = !prev;
-                AsyncStorage.setItem(SECRET_STORAGE_KEY, String(next));
-
-                Alert.alert(
-                    next ? t("about_secret_unlocked_title") : t("about_secret_locked_title"),
-                    next ? t("about_secret_unlocked_text") : t("about_secret_locked_text")
-                );
-
-                return next;
-            });
-        }
-    };
 
     const router = useRouter();
 
@@ -97,17 +60,13 @@ export default function AboutScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.logoSection}>
-                        <TouchableOpacity
-                            style={styles.logoWrapper}
-                            onPress={handleLogoTap}
-                            activeOpacity={1}
-                        >
+                        <View style={styles.logoWrapper}>
                             <Image
                                 source={require('@/assets/images/icon.png')}
                                 style={styles.logoImage}
                                 resizeMode="contain"
                             />
-                        </TouchableOpacity>
+                        </View>
                         <Text style={styles.appName}>Skaneo</Text>
                         <Text style={styles.version}>Version {APP_VERSION}</Text>
                     </View>
@@ -179,24 +138,6 @@ export default function AboutScreen() {
                         </View>
 
                     </View>
-                    {secretUnlocked && (
-                        <View style={styles.section}>
-                            <View style={styles.linksCard}>
-                                <TouchableOpacity
-                                    style={styles.linkRow}
-                                    onPress={() => router.push("/secret")}
-                                    activeOpacity={0.6}
-                                >
-                                    <View style={styles.linkLeft}>
-                                        <Ionicons name="flash-outline" size={20} color="#475569" />
-                                        <Text style={styles.linkLabel}>{t("about_shortcuts")}</Text>
-                                    </View>
-                                    <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    )}
-
                     <Text style={styles.footerText}>{t("about_footer")}</Text>
                 </ScrollView>
             </SafeAreaView>
