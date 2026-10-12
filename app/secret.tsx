@@ -263,18 +263,11 @@ export default function SecretScreen() {
   };
 
   const handleSave = async () => {
-    const cleanLabel = label.trim();
-    const cleanUssd = ussd.trim();
-    if (!cleanLabel || !/^[*#][0-9*#]*#$/.test(cleanUssd)) {
-      Alert.alert(t("secret_error_title"), t("secret_required_fields"));
-      return;
-    }
-
     const nextShortcut: Shortcut = {
       id: editingId ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       operator,
-      label: cleanLabel,
-      ussd: cleanUssd,
+      label,
+      ussd,
     };
     const nextShortcuts = editingId
       ? shortcuts.map((shortcut) => shortcut.id === editingId ? nextShortcut : shortcut)
